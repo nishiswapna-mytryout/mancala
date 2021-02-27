@@ -12,10 +12,17 @@ public class Pit {
     private int currentStoneCount;
 
     public int put(int incomingStoneCount) {
+        if (incomingStoneCount<0){
+            throw new IllegalArgumentException("Incoming stone count cannot be negative");
+        }
         return currentStoneCount += incomingStoneCount;
     }
 
     public int emptyPit(){
+
+        if(this.currentStoneCount==0){
+            throw new IllegalArgumentException("Pit is already empty, pick another pit");
+        }
 
         int pickedUpStones = this.currentStoneCount;
         this.currentStoneCount = 0;
