@@ -5,6 +5,7 @@ import lombok.NonNull;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 public class Player {
@@ -13,9 +14,9 @@ public class Player {
     @Getter
     private final String playerName;
     private final BigPit bigPit;
-    private final Set<Pit> pits;
+    private final TreeSet<Pit> pits;
 
-    public Player(@NonNull String playerName, @NonNull BigPit bigPit, @NonNull Set<Pit> pits) {
+    public Player(@NonNull String playerName, @NonNull BigPit bigPit, @NonNull TreeSet<Pit> pits) {
         this.playerName = playerName;
         this.playerId = UUID.randomUUID();
         this.bigPit = bigPit;
@@ -32,8 +33,11 @@ public class Player {
         return new HashSet<>(this.pits);
     }
 
-    public int pickStones(Pit fromPit) {    // fromPit has position of the pit
-        return fromPit != null ? fromPit.emptyPit() : 0;
+    public int pickStones(Pit fromPit) {
+        if(fromPit==null){
+            throw new IllegalArgumentException("Pit cannot be null");
+        }
+        return fromPit.emptyPit();
     }
 
 

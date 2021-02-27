@@ -6,7 +6,7 @@ import lombok.NonNull;
 
 @AllArgsConstructor
 @Getter
-public class Pit {
+public class Pit implements Comparable<Pit>{
     @NonNull
     private final String pitPosition;
     private int currentStoneCount;
@@ -30,4 +30,8 @@ public class Pit {
 
     }
 
+    @Override
+    public int compareTo(Pit pit) {
+        return pit.getPitPosition().compareTo(this.getPitPosition());
+    }
 }
