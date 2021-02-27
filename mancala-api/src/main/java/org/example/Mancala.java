@@ -7,6 +7,5 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class Mancala {
     public static void main(String[] args) {
         SpringApplication.run(Mancala.class, args);
-
     }
 }
