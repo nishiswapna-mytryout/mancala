@@ -37,14 +37,14 @@ public class PitTest {
     @Test
     public void testPitIfAlreadyEmpty() {
         Pit newPit = new Pit("B2", 6);
-        newPit.emptyPit();
-        assertThrows(IllegalArgumentException.class, newPit::emptyPit, "Pit is already empty, pick another pit");
+        newPit.pick();
+        assertThrows(IllegalArgumentException.class, newPit::pick, "Pit is already empty, pick another pit");
     }
 
     @Test
     public void testEmptyPit() {
         int currentStoneCount = pit.getCurrentStoneCount();
-        assertEquals(currentStoneCount, pit.emptyPit());
+        assertEquals(currentStoneCount, pit.pick());
     }
 
 

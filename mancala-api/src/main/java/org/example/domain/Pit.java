@@ -18,7 +18,7 @@ public class Pit implements Comparable<Pit>{
         return currentStoneCount += incomingStoneCount;
     }
 
-    public int emptyPit(){
+    public int pick(){
 
         if(this.currentStoneCount==0){
             throw new IllegalArgumentException("Pit is already empty, pick another pit");

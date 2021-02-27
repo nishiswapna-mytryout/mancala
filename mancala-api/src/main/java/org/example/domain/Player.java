@@ -3,8 +3,6 @@ package org.example.domain;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.HashSet;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
@@ -29,15 +27,32 @@ public class Player {
     }
 
     //TODO check if we need copy of pits here
-    public Set<Pit> getPits() {
-        return new HashSet<>(this.pits);
+    public TreeSet<Pit> getPits() {
+        return new TreeSet<>(this.pits);
+    }
+
+    public Pit getPit(String pitPosition){
+        return pits.stream()
+                .filter(pit->pit.getPitPosition().equals(pitPosition))
+                .findFirst()
+                .orElseThrow(()-> new IllegalArgumentException("Invalid Pit Position"));
     }
 
     public int pickStones(Pit fromPit) {
         if(fromPit==null){
             throw new IllegalArgumentException("Pit cannot be null");
         }
-        return fromPit.emptyPit();
+        return fromPit.pick();
+    }
+
+    public boolean areAllPitsEmpty(){
+        return this.getPits().stream().allMatch(pit->pit.getCurrentStoneCount()==0);
+    }
+
+    public int emptyAllPits(){
+        return this.getPits().stream()
+                .map(Pit::pick)
+                .reduce(0,Integer::sum);
     }
 
 
