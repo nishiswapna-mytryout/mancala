@@ -11,7 +11,7 @@ public class BigPit {
     private final String pitPosition;
     private int currentStoneCount = 0;
 
-    public int sow(int incomingStoneCount) {
+    public int put(int incomingStoneCount) {
         return currentStoneCount += incomingStoneCount;
     }
 }

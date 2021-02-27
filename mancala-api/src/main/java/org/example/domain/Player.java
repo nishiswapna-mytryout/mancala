@@ -31,4 +31,17 @@ public class Player {
     public Set<Pit> getPits() {
         return new HashSet<>(this.pits);
     }
+
+    public int pickStones(Pit fromPit) {    // fromPit has position of the pit
+        return fromPit != null ? fromPit.emptyPit() : 0;
+    }
+
+
+    public void sowStonesInBigPit(int stoneCount) {
+
+        if (stoneCount > 0) {
+            bigPit.put(stoneCount);
+        }
+
+    }
 }
