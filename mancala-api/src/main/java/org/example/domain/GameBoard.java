@@ -31,7 +31,6 @@ public class GameBoard {
 
     }
 
-
     private GameBoard(int gameStoneCount) {
 
         this.allPits = new HashMap<String, Pit>() {{
