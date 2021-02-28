@@ -4,8 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.domain.exceptions.GameDrawException;
 import org.example.domain.exceptions.GameNotOverException;
 
-import java.util.stream.IntStream;
-
 @Slf4j
 public class TheGame {
 
@@ -26,50 +24,56 @@ public class TheGame {
     public Player sow(String pickPosition, PlayerTurn playerTurn) throws GameNotOverException, GameDrawException {
 
         String pitPosition = pickPosition;
-        if(PlayerTurn.PLAYER_A.equals(playerTurn)){
+        if (PlayerTurn.PLAYER_A.equals(playerTurn)) {
 
-            int pickedStones = this.playerA.getPit(pitPosition).pick();
+            return playAndNextTurn(this.playerA, this.playerB, playerTurn, pitPosition);
 
-            //drop all stones except the last one
-            for(int i = 0 ; i < pickedStones-1 ;i++){
-                Pit nextPit = this.gameBoard.getNextPit(playerTurn, pitPosition);
-                nextPit.sow(1);
-                pitPosition = nextPit.getPitPosition();
-            }
+        } else if (PlayerTurn.PLAYER_B.equals(playerTurn)) {
 
-            int lastStone = 1;
+            return playAndNextTurn(this.playerB, this.playerA, playerTurn, pitPosition);
 
-            //handle last stone
-            if("AL".equals(pitPosition)){
-                this.playerA.getBigPit().sow(lastStone);
-                return this.playerA;
-            }else{
-                Pit pit = this.gameBoard.getAllPits().get(pitPosition);
-
-                if(this.playerA.getPits().contains(pit) && pit.getCurrentStoneCount()==0){
-                    int capturedStones = 0 ;
-
-                    try {
-                        capturedStones = this.gameBoard.getOppositePit(pitPosition).pick();
-                    }catch(IllegalArgumentException exception){
-                        log.warn("The opposite pit doesnt have any stones, hence captured stones is 0");
-                    }
-
-                    this.playerA.getBigPit().sow(capturedStones+lastStone);
-                }else {
-                    pit.sow(1);
-                }
-
-                return playerB;
-            }
-
-
-
-        }else if(PlayerTurn.PLAYER_B.equals(playerTurn)){
-
+        } else {
+            throw new IllegalArgumentException("Unknown Player turn type");
         }
 
-        return null;
+    }
+
+    private Player playAndNextTurn(Player currentPlayer, Player nextPlayer, PlayerTurn playerTurn, String pitPosition) {
+
+        int pickedStones = currentPlayer.getPit(pitPosition).pick();
+
+        //sow all stones except the last one
+        for (int i = 0; i < pickedStones - 1; i++) {
+            Pit nextPit = this.gameBoard.getNextPit(playerTurn, pitPosition);
+            nextPit.sow(1);
+            pitPosition = nextPit.getPitPosition();
+        }
+
+        int lastStone = 1;
+
+        //handle last stone
+        if (currentPlayer.getBigPit().getPitPosition().equals(pitPosition)) {
+            currentPlayer.getBigPit().sow(lastStone);
+            return currentPlayer;
+        } else {
+            Pit pit = this.gameBoard.getAllPits().get(pitPosition);
+
+            if (currentPlayer.getPits().contains(pit) && pit.getCurrentStoneCount() == 0) {
+                int capturedStones = 0;
+
+                try {
+                    capturedStones = this.gameBoard.getOppositePit(pitPosition).pick();
+                } catch (IllegalArgumentException exception) {
+                    log.warn("The opposite pit doesnt have any stones, hence captured stones is 0");
+                }
+
+                currentPlayer.getBigPit().sow(capturedStones + lastStone);
+            } else {
+                pit.sow(1);
+            }
+
+            return nextPlayer;
+        }
 
     }
 
