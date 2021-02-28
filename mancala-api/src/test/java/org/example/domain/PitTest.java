@@ -9,34 +9,34 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PitTest {
 
-    private static Pit pit;
+    private static SmallPit pit;
 
     @BeforeAll
     public static void setUp() {
-        pit = new Pit("A1", 6);
+        pit = new SmallPit("A1", 6);
     }
 
     @Test
     public void testPutForZeroValue() {
         int currentStoneCount = pit.getCurrentStoneCount();
-        assertEquals(currentStoneCount, pit.put(0));
+        assertEquals(currentStoneCount, pit.sow(0));
     }
 
     @Test
     public void testPutForNegativeValue() {
-        assertThrows(IllegalArgumentException.class, () -> pit.put(-2), "Incoming stone count cannot be negative");
+        assertThrows(IllegalArgumentException.class, () -> pit.sow(-2), "Incoming stone count cannot be negative");
     }
 
     @Test
     public void testPutForPositiveValue() {
         int currentStoneCount = pit.getCurrentStoneCount();
         int increment = 2;
-        assertEquals(currentStoneCount + increment, pit.put(increment));
+        assertEquals(currentStoneCount + increment, pit.sow(increment));
     }
 
     @Test
     public void testPitIfAlreadyEmpty() {
-        Pit newPit = new Pit("B2", 6);
+        SmallPit newPit = new SmallPit("B2", 6);
         newPit.pick();
         assertThrows(IllegalArgumentException.class, newPit::pick, "Pit is already empty, pick another pit");
     }

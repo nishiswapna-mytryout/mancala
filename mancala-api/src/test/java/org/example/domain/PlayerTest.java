@@ -4,7 +4,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -16,20 +15,20 @@ public class PlayerTest {
     public static void setUp(){
         player = new Player("Random Name",
                 new BigPit("AL"),
-                new TreeSet<>(Arrays.asList(new Pit("A1",6), new Pit("A2",6))));
+                Arrays.asList(new SmallPit("A1",6), new SmallPit("A2",6)));
     }
 
     @Test
     public void testPickStonesWhenPitHasStones(){
 
-        Pit pit = new Pit("A3",7);
+        SmallPit pit = new SmallPit("A3",7);
         assertEquals(pit.getCurrentStoneCount(),player.pickStones(pit));
     }
 
     @Test
     public void testPickStonesWhenPitHasNoStones(){
 
-        Pit pit = new Pit("A3",0);
+        SmallPit pit = new SmallPit("A3",0);
         assertThrows(IllegalArgumentException.class,()->player.pickStones(pit));
     }
 

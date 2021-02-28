@@ -1,64 +1,37 @@
 package org.example.domain;
 
-import lombok.AllArgsConstructor;
 import org.example.domain.exceptions.GameDrawException;
 import org.example.domain.exceptions.GameNotOverException;
-
-import java.util.Arrays;
-import java.util.TreeSet;
-import java.util.stream.Stream;
 
 
 public class TheGame {
 
     private final Player playerA;
     private final Player playerB;
+    private final GameBoard gameBoard;
+
 
     public TheGame(final String playerAName, final String playerBName) {
 
+
+
+
         int PIT_STONE_COUNT = 6;
-        TreeSet<Pit> pitTreeSetA = new TreeSet<>(Arrays.asList(new Pit("A1", PIT_STONE_COUNT)
-                , new Pit("A2", PIT_STONE_COUNT)
-                , new Pit("A3", PIT_STONE_COUNT)
-                , new Pit("A4", PIT_STONE_COUNT)
-                , new Pit("A5", PIT_STONE_COUNT)
-                , new Pit("A6", PIT_STONE_COUNT)));
-
-        TreeSet<Pit> pitTreeSetB = new TreeSet<>(Arrays.asList(new Pit("B1", PIT_STONE_COUNT)
-                , new Pit("B2", PIT_STONE_COUNT)
-                , new Pit("B3", PIT_STONE_COUNT)
-                , new Pit("B4", PIT_STONE_COUNT)
-                , new Pit("B5", PIT_STONE_COUNT)
-                , new Pit("B6", PIT_STONE_COUNT)));
+        this.gameBoard = new GameBoard(PIT_STONE_COUNT);
 
 
-        this.playerA = new Player(playerAName, new BigPit("AL"), pitTreeSetA);
-        this.playerB = new Player(playerBName, new BigPit("BL"), pitTreeSetB);
+        this.playerA = new Player(playerAName, this.gameBoard.getBigPitA(), this.gameBoard.getSideA());
+        this.playerB = new Player(playerBName, this.gameBoard.getBigPitB(), this.gameBoard.getSideB());
     }
 
 
     public Player sow(int pickPosition, PlayerTurn playerTurn) throws GameNotOverException, GameDrawException {
 
-        if(isGameComingToEnd()){
-            return getWinner();
-        }else{
-
-            if(PlayerTurn.PLAYER_A.equals(playerTurn)){
-                
-                Pit pickupPit = playerA.getPit("A"+pickPosition);
-                int pickedStones = pickupPit.pick();
-                sowRight(pickedStones-1,pickPosition+1);
-
-            }else if(PlayerTurn.PLAYER_B.equals(playerTurn)){
-
-            }
-
-        }
+        return null;
 
     }
 
-    private void sowRight(int i, int i1) {
-    }
+
 
     public boolean isGameComingToEnd() {
 
@@ -73,12 +46,12 @@ public class TheGame {
 
         } else if (playerA.areAllPitsEmpty() && !playerB.areAllPitsEmpty()) {
 
-            playerB.getBigPit().put(playerB.emptyAllPits());
+            playerB.getBigPit().sow(playerB.emptyAllPits());
             return getWinningPlayer();
 
         } else if (!playerA.areAllPitsEmpty() && playerB.areAllPitsEmpty()) {
 
-            playerA.getBigPit().put(playerA.emptyAllPits());
+            playerA.getBigPit().sow(playerA.emptyAllPits());
             return getWinningPlayer();
 
         } else{

@@ -3,7 +3,8 @@ package org.example.domain;
 import lombok.Getter;
 import lombok.NonNull;
 
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Player {
@@ -12,9 +13,9 @@ public class Player {
     @Getter
     private final String playerName;
     private final BigPit bigPit;
-    private final TreeSet<Pit> pits;
+    private final List<SmallPit> pits;
 
-    public Player(@NonNull String playerName, @NonNull BigPit bigPit, @NonNull TreeSet<Pit> pits) {
+    public Player(@NonNull String playerName, @NonNull BigPit bigPit, @NonNull List<SmallPit> pits) {
         this.playerName = playerName;
         this.playerId = UUID.randomUUID();
         this.bigPit = bigPit;
@@ -27,18 +28,18 @@ public class Player {
     }
 
     //TODO check if we need copy of pits here
-    public TreeSet<Pit> getPits() {
-        return new TreeSet<>(this.pits);
+    public List<SmallPit> getPits() {
+        return new ArrayList<>(this.pits);
     }
 
-    public Pit getPit(String pitPosition){
+    public SmallPit getPit(String pitPosition){
         return pits.stream()
                 .filter(pit->pit.getPitPosition().equals(pitPosition))
                 .findFirst()
                 .orElseThrow(()-> new IllegalArgumentException("Invalid Pit Position"));
     }
 
-    public int pickStones(Pit fromPit) {
+    public int pickStones(SmallPit fromPit) {
         if(fromPit==null){
             throw new IllegalArgumentException("Pit cannot be null");
         }
@@ -51,7 +52,7 @@ public class Player {
 
     public int emptyAllPits(){
         return this.getPits().stream()
-                .map(Pit::pick)
+                .map(SmallPit::pick)
                 .reduce(0,Integer::sum);
     }
 
@@ -59,7 +60,7 @@ public class Player {
     public void sowStonesInBigPit(int stoneCount) {
 
         if (stoneCount > 0) {
-            bigPit.put(stoneCount);
+            bigPit.sow(stoneCount);
         }
 
     }
