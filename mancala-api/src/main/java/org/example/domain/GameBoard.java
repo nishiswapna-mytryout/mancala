@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 @Getter
 public class GameBoard {
 
+    private static GameBoard activeGameBoard;
+
     private final Map<String, Pit> allPits;
     private final List<SmallPit> sideA;
     private final List<SmallPit> sideB;
@@ -20,8 +22,17 @@ public class GameBoard {
     private final BigPit bigPitA;
     private final BigPit bigPitB;
 
+    public static GameBoard initializeGame(int gameStoneCount) {
 
-    public GameBoard(int gameStoneCount) {
+        if (activeGameBoard == null) {
+            activeGameBoard = new GameBoard(gameStoneCount);
+        }
+        return activeGameBoard;
+
+    }
+
+
+    private GameBoard(int gameStoneCount) {
 
         this.allPits = new HashMap<String, Pit>() {{
             put("A1", new SmallPit("A1", gameStoneCount));
@@ -90,6 +101,7 @@ public class GameBoard {
 
     /**
      * This provided the opposite small pit of the current position
+     *
      * @param pitPosition
      * @return SmallPit
      * @throws IllegalArgumentException
@@ -108,6 +120,7 @@ public class GameBoard {
      * This method provides the next pit based on the player turn.
      * In case player turn is A then it will give all the pits in counter clockwise, but will skip
      * opponents big pit
+     *
      * @param playerTurn
      * @param pitPosition
      * @return Pit

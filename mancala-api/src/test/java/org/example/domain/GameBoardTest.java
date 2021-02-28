@@ -11,7 +11,7 @@ public class GameBoardTest {
 
     @BeforeAll
     public static void init(){
-        gameboard = new GameBoard(6);
+        gameboard = GameBoard.initializeGame(6);
     }
 
     @Test
