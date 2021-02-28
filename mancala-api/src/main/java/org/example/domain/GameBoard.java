@@ -114,6 +114,20 @@ public class GameBoard {
         return (SmallPit) allPits.get(oppositePitPosition);
     }
 
+    public Pit sowRightAllStonesInHandAndGiveLastPosition(final String startPitPosition,final PlayerTurn playerTurn, final int stones){
+
+        String currentPitPosition = startPitPosition;
+        for (int i = 0; i < stones; i++) {
+            Pit nextPit = this.getNextPit(playerTurn, currentPitPosition);
+            nextPit.sow(1);
+            currentPitPosition = nextPit.getPitPosition();
+        }
+
+        return this.getAllPits().get(currentPitPosition);
+
+    }
+
+
 
     /**
      * This method provides the next pit based on the player turn.

@@ -15,10 +15,14 @@ public abstract class Pit {
     private int currentStoneCount;
 
     public int sow(int incomingStoneCount) {
-        if (incomingStoneCount<0){
+        if (incomingStoneCount < 0) {
             throw new IllegalArgumentException("Incoming stone count cannot be negative");
         }
         return currentStoneCount += incomingStoneCount;
+    }
+
+    public boolean isEmpty() {
+        return currentStoneCount == 0;
     }
 
 }

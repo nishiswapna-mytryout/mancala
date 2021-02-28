@@ -56,8 +56,14 @@ public class Player {
                 .reduce(0,Integer::sum);
     }
 
+    public boolean smallPitBelongsToMe(final SmallPit smallPit){
 
-    public void sowStonesInBigPit(int stoneCount) {
+        return smallPit!=null && pits.contains(smallPit);
+
+    }
+
+
+    public void sowStonesInBigPit(final int stoneCount) {
 
         if (stoneCount > 0) {
             bigPit.sow(stoneCount);

@@ -24,6 +24,7 @@ public class TheGame {
     public Player sow(String pickPosition, PlayerTurn playerTurn) {
 
         String pitPosition = pickPosition;
+        log.warn(String.format("Player selected position %s",pickPosition));
         if (PlayerTurn.PLAYER_A.equals(playerTurn)) {
             return playAndNextTurn(this.playerA, this.playerB, playerTurn, pitPosition);
         } else if (PlayerTurn.PLAYER_B.equals(playerTurn)) {
@@ -38,38 +39,33 @@ public class TheGame {
 
         int pickedStones = currentPlayer.getPit(pitPosition).pick();
 
-        //sow all stones except the last one
-        for (int i = 0; i < pickedStones - 1; i++) {
-            Pit nextPit = this.gameBoard.getNextPit(playerTurn, pitPosition);
-            nextPit.sow(1);
-            pitPosition = nextPit.getPitPosition();
-        }
+        Pit lastSownPit = this.gameBoard.sowRightAllStonesInHandAndGiveLastPosition(pitPosition,playerTurn,pickedStones-1);
 
         int lastStone = 1;
         //bad code we have to come back here
-        Pit lastPitToSow = this.gameBoard.getNextPit(playerTurn, pitPosition);
+        Pit lastPitToSow = this.gameBoard.getNextPit(playerTurn, lastSownPit.getPitPosition());
 
         //handle last stone
         if (currentPlayer.getBigPit().equals(lastPitToSow)) {
-            currentPlayer.getBigPit().sow(lastStone);
+            currentPlayer.sowStonesInBigPit(lastStone);
             log.warn(this.gameBoard.toString());
             return currentPlayer;
         } else {
 
             if (lastPitToSow instanceof SmallPit
-                    && currentPlayer.getPits().contains(lastPitToSow)
-                    && lastPitToSow.getCurrentStoneCount() == 0) {
-                int capturedStones = 0;
+                    && currentPlayer.smallPitBelongsToMe((SmallPit)lastPitToSow)
+                    && lastPitToSow.isEmpty()) {
+                int capturedStonesFromOpponent = 0;
 
                 try {
-                    capturedStones = this.gameBoard.getOppositePit(lastPitToSow.getPitPosition()).pick();
+                    capturedStonesFromOpponent = this.gameBoard.getOppositePit(lastPitToSow.getPitPosition()).pick();
                 } catch (IllegalArgumentException exception) {
                     log.warn("The opposite pit doesnt have any stones, hence captured stones is 0");
                 }
 
-                currentPlayer.getBigPit().sow(capturedStones + lastStone);
+                currentPlayer.sowStonesInBigPit(capturedStonesFromOpponent + lastStone);
             } else {
-                lastPitToSow.sow(1);
+                lastPitToSow.sow(lastStone);
             }
             log.warn(this.gameBoard.toString());
             return nextPlayer;
