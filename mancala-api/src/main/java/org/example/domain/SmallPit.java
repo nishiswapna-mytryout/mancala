@@ -1,32 +1,24 @@
 package org.example.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NonNull;
 
-@AllArgsConstructor
-@Getter
-public class SmallPit implements Comparable<SmallPit>,Pit{
-    @NonNull
-    private final String pitPosition;
-    private int currentStoneCount;
 
-    @Override
-    public int sow(int incomingStoneCount) {
-        if (incomingStoneCount<0){
-            throw new IllegalArgumentException("Incoming stone count cannot be negative");
-        }
-        return currentStoneCount += incomingStoneCount;
+public class SmallPit extends Pit{
+
+    public SmallPit(@NonNull final String pitPosition, @NonNull final int currentStoneCount) {
+        super(pitPosition, currentStoneCount);
     }
+
+
 
     public int pick(){
 
-        if(this.currentStoneCount==0){
+        if(this.getCurrentStoneCount()==0){
             throw new IllegalArgumentException("Pit is already empty, pick another pit");
         }
 
-        int pickedUpStones = this.currentStoneCount;
-        this.currentStoneCount = 0;
+        int pickedUpStones = this.getCurrentStoneCount();
+        this.setCurrentStoneCount(0);
         return pickedUpStones;
 
     }
@@ -36,8 +28,4 @@ public class SmallPit implements Comparable<SmallPit>,Pit{
         return pit instanceof SmallPit && this.getPitPosition().equals(((SmallPit) pit).getPitPosition());
     }
 
-    @Override
-    public int compareTo(SmallPit pit) {
-        return pit.getPitPosition().compareTo(this.getPitPosition());
-    }
 }

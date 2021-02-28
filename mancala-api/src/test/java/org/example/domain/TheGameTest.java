@@ -8,10 +8,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class TheGameTest {
 
-    public static TheGame activegame = null;
+    public static TheGame activegame;
 
     @BeforeAll
-    public static void init(){
+    public static void setUp(){
         activegame = new TheGame("Tom","Harry");
     }
 

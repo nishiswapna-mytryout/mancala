@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameBoardTest {
 
-    public static GameBoard gameboard = null;
+    public static GameBoard gameboard;
 
     @BeforeAll
-    public static void init() {
+    public static void setUp() {
         gameboard = GameBoard.initializeGame(6);
     }
 
@@ -21,12 +21,12 @@ public class GameBoardTest {
 
     @Test
     public void testGetOppPitforInvalidposition(){
-        assertThrows(IllegalArgumentException.class, ()-> gameboard.getOppositePit("D3").getPitPosition());
+        assertThrows(IllegalArgumentException.class, ()-> gameboard.getOppositePit("D3"));
     }
 
     @Test
     public void testGetOppPitforBigPit(){
-        assertThrows(IllegalArgumentException.class, ()-> gameboard.getOppositePit("AL").getPitPosition());
+        assertThrows(IllegalArgumentException.class, ()-> gameboard.getOppositePit("AL"));
     }
 
     @Test

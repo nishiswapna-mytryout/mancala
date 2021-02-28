@@ -1,19 +1,12 @@
 package org.example.domain;
 
-import lombok.Getter;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-@Getter
-public class BigPit implements Pit{
-    @NonNull
-    private final String pitPosition;
-    private int currentStoneCount = 0;
 
-    @Override
-    public int sow(int incomingStoneCount) {
-        return currentStoneCount += incomingStoneCount;
+public class BigPit extends Pit{
+
+    public BigPit(@NonNull final String pitPosition) {
+        super(pitPosition, 0);
     }
 
     @Override
