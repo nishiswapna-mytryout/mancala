@@ -21,17 +21,13 @@ public class TheGame {
     }
 
 
-    public Player sow(String pickPosition, PlayerTurn playerTurn) throws GameNotOverException, GameDrawException {
+    public Player sow(String pickPosition, PlayerTurn playerTurn) {
 
         String pitPosition = pickPosition;
         if (PlayerTurn.PLAYER_A.equals(playerTurn)) {
-
             return playAndNextTurn(this.playerA, this.playerB, playerTurn, pitPosition);
-
         } else if (PlayerTurn.PLAYER_B.equals(playerTurn)) {
-
             return playAndNextTurn(this.playerB, this.playerA, playerTurn, pitPosition);
-
         } else {
             throw new IllegalArgumentException("Unknown Player turn type");
         }
@@ -50,19 +46,22 @@ public class TheGame {
         }
 
         int lastStone = 1;
+        //bad code we have to come back here
+        String lastSowPosition = this.gameBoard.getNextPit(playerTurn, pitPosition).getPitPosition();
 
         //handle last stone
-        if (currentPlayer.getBigPit().getPitPosition().equals(pitPosition)) {
+        if (currentPlayer.getBigPit().getPitPosition().equals(lastSowPosition)) {
             currentPlayer.getBigPit().sow(lastStone);
+            log.warn(this.gameBoard.toString());
             return currentPlayer;
         } else {
-            Pit pit = this.gameBoard.getAllPits().get(pitPosition);
+            Pit pit = this.gameBoard.getAllPits().get(lastSowPosition);
 
             if (currentPlayer.getPits().contains(pit) && pit.getCurrentStoneCount() == 0) {
                 int capturedStones = 0;
 
                 try {
-                    capturedStones = this.gameBoard.getOppositePit(pitPosition).pick();
+                    capturedStones = this.gameBoard.getOppositePit(lastSowPosition).pick();
                 } catch (IllegalArgumentException exception) {
                     log.warn("The opposite pit doesnt have any stones, hence captured stones is 0");
                 }
@@ -71,7 +70,7 @@ public class TheGame {
             } else {
                 pit.sow(1);
             }
-
+            log.warn(this.gameBoard.toString());
             return nextPlayer;
         }
 

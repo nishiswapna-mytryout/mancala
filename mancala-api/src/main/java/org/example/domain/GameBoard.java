@@ -39,7 +39,7 @@ public class GameBoard {
             put("A2", new SmallPit("A2", gameStoneCount));
             put("A3", new SmallPit("A3", gameStoneCount));
             put("A4", new SmallPit("A4", gameStoneCount));
-            put("A5", new SmallPit("A3", gameStoneCount));
+            put("A5", new SmallPit("A5", gameStoneCount));
             put("A6", new SmallPit("A6", gameStoneCount));
             put("AL", new BigPit("AL"));
             put("B1", new SmallPit("B1", gameStoneCount));
@@ -149,7 +149,14 @@ public class GameBoard {
         }
 
         return allPits.get(nextNode.getValue());
+    }
 
-
+    @Override
+    public String toString() {
+        String sideA = this.sideA.stream().map(pits-> pits.getPitPosition()+": "+pits.getCurrentStoneCount()).collect(Collectors.joining(","));
+        sideA= sideA+", "+this.bigPitA.getPitPosition()+": "+this.bigPitA.getCurrentStoneCount();
+        String sideB = this.sideB.stream().map(pits-> pits.getPitPosition()+": "+pits.getCurrentStoneCount()).collect(Collectors.joining(","));
+        sideB= sideB+", "+this.bigPitB.getPitPosition()+": "+this.bigPitB.getCurrentStoneCount();
+        return "\r\n"+sideA+"\r\n"+sideB;
     }
 }
