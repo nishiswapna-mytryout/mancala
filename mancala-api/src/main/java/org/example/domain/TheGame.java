@@ -47,28 +47,29 @@ public class TheGame {
 
         int lastStone = 1;
         //bad code we have to come back here
-        String lastSowPosition = this.gameBoard.getNextPit(playerTurn, pitPosition).getPitPosition();
+        Pit lastPitToSow = this.gameBoard.getNextPit(playerTurn, pitPosition);
 
         //handle last stone
-        if (currentPlayer.getBigPit().getPitPosition().equals(lastSowPosition)) {
+        if (currentPlayer.getBigPit().equals(lastPitToSow)) {
             currentPlayer.getBigPit().sow(lastStone);
             log.warn(this.gameBoard.toString());
             return currentPlayer;
         } else {
-            Pit pit = this.gameBoard.getAllPits().get(lastSowPosition);
 
-            if (currentPlayer.getPits().contains(pit) && pit.getCurrentStoneCount() == 0) {
+            if (lastPitToSow instanceof SmallPit
+                    && currentPlayer.getPits().contains(lastPitToSow)
+                    && lastPitToSow.getCurrentStoneCount() == 0) {
                 int capturedStones = 0;
 
                 try {
-                    capturedStones = this.gameBoard.getOppositePit(lastSowPosition).pick();
+                    capturedStones = this.gameBoard.getOppositePit(lastPitToSow.getPitPosition()).pick();
                 } catch (IllegalArgumentException exception) {
                     log.warn("The opposite pit doesnt have any stones, hence captured stones is 0");
                 }
 
                 currentPlayer.getBigPit().sow(capturedStones + lastStone);
             } else {
-                pit.sow(1);
+                lastPitToSow.sow(1);
             }
             log.warn(this.gameBoard.toString());
             return nextPlayer;
