@@ -4,11 +4,12 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.example.domain.interfaces.PitBehavior;
 
 @AllArgsConstructor
 @Getter
 @Setter
-public abstract class Pit {
+public abstract class Pit implements PitBehavior {
 
     private final String pitPosition;
     @Setter(AccessLevel.PROTECTED)
