@@ -7,8 +7,8 @@ import org.example.domain.exceptions.GameNotOverException;
 @Slf4j
 public class TheGame {
 
-    private final Player playerA;
-    private final Player playerB;
+    private final Player1 playerA;
+    private final Player1 playerB;
     private final GameBoard gameBoard;
 
 
@@ -16,12 +16,12 @@ public class TheGame {
 
         int PIT_STONE_COUNT = 6;
         this.gameBoard = GameBoard.initializeGame(PIT_STONE_COUNT);
-        this.playerA = new Player(playerAName, this.gameBoard.getBigPitA(), this.gameBoard.getSideA());
-        this.playerB = new Player(playerBName, this.gameBoard.getBigPitB(), this.gameBoard.getSideB());
+        this.playerA = new Player1(playerAName, this.gameBoard.getBigPitA(), this.gameBoard.getSideA());
+        this.playerB = new Player1(playerBName, this.gameBoard.getBigPitB(), this.gameBoard.getSideB());
     }
 
 
-    public Player sow(String pickPosition, PlayerTurn playerTurn) {
+    public Player1 sow(String pickPosition, PlayerTurn playerTurn) {
 
         String pitPosition = pickPosition;
         log.warn(String.format("Player selected position %s",pickPosition));
@@ -35,7 +35,7 @@ public class TheGame {
 
     }
 
-    private Player playAndNextTurn(Player currentPlayer, Player nextPlayer, PlayerTurn playerTurn, String pitPosition) {
+    private Player1 playAndNextTurn(Player1 currentPlayer, Player1 nextPlayer, PlayerTurn playerTurn, String pitPosition) {
 
         int pickedStones = currentPlayer.getPit(pitPosition).pick();
 
@@ -78,7 +78,7 @@ public class TheGame {
         return playerA.areAllPitsEmpty() || playerB.areAllPitsEmpty();
     }
 
-    public Player getWinner() throws GameDrawException, GameNotOverException {
+    public Player1 getWinner() throws GameDrawException, GameNotOverException {
 
         if (playerA.areAllPitsEmpty() && playerB.areAllPitsEmpty()) {
             return getWinningPlayer();
@@ -99,7 +99,7 @@ public class TheGame {
 
     }
 
-    private Player getWinningPlayer() throws GameDrawException {
+    private Player1 getWinningPlayer() throws GameDrawException {
         if (playerB.getBigPit().getCurrentStoneCount() == playerA.getBigPit().getCurrentStoneCount()) {
             throw new GameDrawException("Game is Draw, No winner");
         } else if (playerB.getBigPit().getCurrentStoneCount() > playerA.getBigPit().getCurrentStoneCount()) {

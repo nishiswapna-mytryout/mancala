@@ -18,7 +18,7 @@ public class TheGameTest {
     @Test
     public void testSow(){
 
-        Player player = activegame.sow("A1", PlayerTurn.PLAYER_A);
+        Player1 player = activegame.sow("A1", PlayerTurn.PLAYER_A);
         assertEquals(player.getPlayerName(),"Tom");
 
         player = activegame.sow("B2", PlayerTurn.PLAYER_B);

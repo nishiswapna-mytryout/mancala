@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Player {
+public class Player1 {
     @Getter
     private final UUID playerId;
     @Getter
@@ -15,7 +15,7 @@ public class Player {
     private final BigPit bigPit;
     private final List<SmallPit> pits;
 
-    public Player(@NonNull String playerName, @NonNull BigPit bigPit, @NonNull List<SmallPit> pits) {
+    public Player1(@NonNull String playerName, @NonNull BigPit bigPit, @NonNull List<SmallPit> pits) {
         this.playerName = playerName;
         this.playerId = UUID.randomUUID();
         this.bigPit = bigPit;

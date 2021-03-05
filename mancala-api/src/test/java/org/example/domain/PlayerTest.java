@@ -9,11 +9,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class PlayerTest {
 
-    private static Player player = null;
+    private static Player1 player = null;
 
     @BeforeAll
     public static void setUp(){
-        player = new Player("Random Name",
+        player = new Player1("Random Name",
                 new BigPit("AL"),
                 Arrays.asList(new SmallPit("A1",6), new SmallPit("A2",6)));
     }
