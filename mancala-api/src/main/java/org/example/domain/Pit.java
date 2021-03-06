@@ -1,9 +1,6 @@
 package org.example.domain;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.example.domain.interfaces.PitBehavior;
 
 import java.io.Serializable;
@@ -11,6 +8,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Getter
 @Setter
+@ToString
 public abstract class Pit implements PitBehavior {
 
     private final String pitPosition;
