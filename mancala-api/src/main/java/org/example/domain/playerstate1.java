@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @AllArgsConstructor
 @Getter
-public class PlayerState {
+public class playerstate1 {
 
     @NonNull
     private final UUID playerID;

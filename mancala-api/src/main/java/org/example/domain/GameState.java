@@ -12,5 +12,5 @@ public class GameState {
     @NonNull
     private final String gameId;
     @NonNull
-    private final List<PlayerState> playerState;
+    private final List<playerstate1> playerstate1;
 }
