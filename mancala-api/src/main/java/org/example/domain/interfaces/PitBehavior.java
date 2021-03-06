@@ -1,6 +1,8 @@
 package org.example.domain.interfaces;
 
-public interface PitBehavior {
+import java.io.Serializable;
+
+public interface PitBehavior extends Serializable {
 
     static void validatePitPosition(final String pitPosition) {
         if (pitPosition == null || pitPosition.trim().length() == 0) {

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.example.domain.interfaces.PitBehavior;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @Getter
 @Setter

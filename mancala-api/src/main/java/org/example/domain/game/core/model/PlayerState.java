@@ -4,11 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.domain.Pit;
 
+import java.io.Serializable;
 import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class PlayerState {
+public class PlayerState implements Serializable {
 
     private final String playerId;
     private final boolean playerTurn;

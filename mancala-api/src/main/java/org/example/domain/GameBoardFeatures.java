@@ -97,6 +97,8 @@ public class GameBoardFeatures {
      * @throws IllegalArgumentException
      */
     public SmallPit getOppositePit(String pitPosition) {
+        PitBehavior.validatePitPosition(pitPosition);
+
         if (!this.gamePitMapping.containsKey(pitPosition)) {
             throw new IllegalArgumentException(String.format("Wrong Pit position %s", pitPosition));
 
