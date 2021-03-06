@@ -26,4 +26,10 @@ public class GamePlayFacade implements GamePlay {
                 , false);
 
     }
+
+    @Override
+    public GameStateResponse sow(String gameId, String pitPosition, String movingPlayer) {
+        GameState previousGameState = gamePlayDatabase.load(gameId);
+        return null;
+    }
 }
