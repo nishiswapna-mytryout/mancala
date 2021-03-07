@@ -6,6 +6,7 @@ import org.example.domain.game.core.ports.incoming.GamePlay;
 import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
 import org.example.domain.game.infrastructure.GamePlayDatabaseAdaptar;
 import org.example.domain.game.infrastructure.GamePlayRepository;
+import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
 import org.example.infrastructure.properties.GameProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +16,8 @@ public class GameDomainConfig {
 
 
     @Bean
-    public GamePlay gamePlay(final GamePlayDatabase gamePlayDatabase, final GameBoardFeatures gameBoardFeatures) {
-        return new GamePlayFacade(gamePlayDatabase, gameBoardFeatures);
+    public GamePlay gamePlay(final GamePlayDatabase gamePlayDatabase, final GameBoardFeatures gameBoardFeatures , final PlayerDatabase playerDatabase) {
+        return new GamePlayFacade(gamePlayDatabase, gameBoardFeatures, playerDatabase);
     }
 
     @Bean

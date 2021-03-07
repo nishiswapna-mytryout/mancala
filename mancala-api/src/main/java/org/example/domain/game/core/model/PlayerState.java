@@ -2,11 +2,10 @@ package org.example.domain.game.core.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
-import org.example.domain.Pit;
 
 import java.io.Serializable;
-import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -14,7 +13,8 @@ import java.util.List;
 public class PlayerState implements Serializable {
 
     private final String playerId;
+    @Setter
     private final boolean playerTurn;
-    private final List<Pit> pits;
+    private final PlayerSide playerSide;
 
 }

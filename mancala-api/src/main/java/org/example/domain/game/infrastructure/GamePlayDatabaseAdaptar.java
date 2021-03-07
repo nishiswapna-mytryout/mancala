@@ -7,6 +7,8 @@ import org.example.domain.game.infrastructure.exceptions.StorageNotFoundExceptio
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 public class GamePlayDatabaseAdaptar implements GamePlayDatabase {
 
@@ -20,8 +22,8 @@ public class GamePlayDatabaseAdaptar implements GamePlayDatabase {
 
     @Override
     @Cacheable(value = "mancala", key = "#gameId" , unless = "#result  == null")
-    public GameState load(final String gameId) {
-        return gamePlayRepository.findById(gameId).orElseThrow(() -> new StorageNotFoundException("Unknown Game"));
+    public Optional<GameState> load(final String gameId) {
+        return gamePlayRepository.findById(gameId);
     }
 
     @Override

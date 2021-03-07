@@ -6,6 +6,8 @@ import org.example.domain.player.core.model.output.PlayerIdentifier;
 import org.example.domain.player.core.model.output.PlayerResponse;
 import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
 
+import java.util.Optional;
+
 @AllArgsConstructor
 public class PlayerDatabaseAdaptar implements PlayerDatabase {
 
@@ -18,8 +20,9 @@ public class PlayerDatabaseAdaptar implements PlayerDatabase {
     }
 
     @Override
-    public PlayerResponse get(final String id) {
-        Player player = playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Id not Found"));
-        return new PlayerResponse(player.getFirstName(), player.getLastName());
+    public Optional<PlayerResponse> getExistingPlayer(final String playerId) {
+        return playerRepository.findById(playerId).map(player-> new PlayerResponse(player.getFirstName(),player.getLastName()));
     }
+
+
 }

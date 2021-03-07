@@ -7,6 +7,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class SowCommand {
     private final String gameId;
-    private final String pitPosition;
+    private final String pickPosition;
     private final String movingPlayer;
 }

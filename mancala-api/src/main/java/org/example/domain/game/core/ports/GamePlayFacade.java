@@ -2,16 +2,14 @@ package org.example.domain.game.core.ports;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.domain.BigPit;
 import org.example.domain.GameBoardFeatures;
-import org.example.domain.Pit;
-import org.example.domain.SmallPit;
 import org.example.domain.game.core.model.GameState;
 import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
 import org.example.domain.game.core.model.output.GameStateResponse;
 import org.example.domain.game.core.ports.incoming.GamePlay;
 import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
+import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
 
 @AllArgsConstructor
 @Slf4j
@@ -19,9 +17,18 @@ public class GamePlayFacade implements GamePlay {
 
     private final GamePlayDatabase gamePlayDatabase;
     private final GameBoardFeatures gameBoardFeatures;
+    private final PlayerDatabase playerDatabase;
 
     @Override
     public GameStateResponse initialize(final NewGameCommand newGameCommand) {
+
+        playerDatabase.getExistingPlayer(newGameCommand.getPlayerIdA())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Player id %s unknown ", newGameCommand.getPlayerIdA())));
+
+        playerDatabase.getExistingPlayer(newGameCommand.getPlayerIdB())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Player id %s unknown ", newGameCommand.getPlayerIdB())));
+
+
         final GameState gameState = gamePlayDatabase.save(GameState.initialize(newGameCommand.getPlayerIdA(), newGameCommand.getPlayerIdB(), gameBoardFeatures));
 
         log.warn(gameState.toString());
@@ -39,28 +46,22 @@ public class GamePlayFacade implements GamePlay {
 
     @Override
     public GameStateResponse sow(final SowCommand sowCommand) {
-        final GameState previousGameState = gamePlayDatabase.load(sowCommand.getGameId());
 
-        final Pit pit = previousGameState.getPitForPlayer(sowCommand.getMovingPlayer(), sowCommand.getPitPosition());
+        playerDatabase.getExistingPlayer(sowCommand.getMovingPlayer())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Player id %s unknown for the active game", sowCommand.getMovingPlayer())));
 
-        if (pit instanceof BigPit) {
-            throw new IllegalStateException("Not allowed to pick stones from big pit");
-        } else {
-            SmallPit smallPit = (SmallPit) pit;
+        final GameState gameState = gamePlayDatabase.load(sowCommand.getGameId())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Unknown active game %s", sowCommand.getGameId())));
 
-            if (smallPit.isEmpty()) {
-                throw new IllegalStateException("Cannot pick from empty pit");
-            }
+        gameState.isPlayerMoveAllowed(sowCommand.getMovingPlayer(),
+                ()->new IllegalStateException(String.format("Player %s move not allowed", sowCommand.getMovingPlayer())));
 
-            final int pickedStones = smallPit.pick();
+        gameState.isPickPositionValid(sowCommand.getPickPosition(),sowCommand.getMovingPlayer(),
+                ()->new IllegalStateException(String.format("Player cannot pick from this position %s", sowCommand.getPickPosition())));
 
-            //gameBoardFeatures.getNextPit()
+        gameState.sowByPlayer(sowCommand.getMovingPlayer(), sowCommand.getPickPosition(), gameBoardFeatures);
 
-
-        }
-
-
-        final GameState newGameState = gamePlayDatabase.update(previousGameState);
+        final GameState newGameState = gamePlayDatabase.update(gameState);
 
         if (newGameState == null) {
             throw new IllegalStateException("Something went wrong with storage");

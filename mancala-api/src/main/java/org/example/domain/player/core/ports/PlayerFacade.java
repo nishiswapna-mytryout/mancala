@@ -18,12 +18,12 @@ public class PlayerFacade implements AddNewPlayer, GetPlayer {
     @Override
     public PlayerIdentifier handleCommand(AddPlayerCommand addPlayerCommand) {
         final Player player = new Player(addPlayerCommand.getFirstName(), addPlayerCommand.getLastName());
-
         return playerDatabase.save(player);
     }
 
     @Override
     public PlayerResponse handleCommand(GetPlayerCommand getPlayerCommand) {
-        return playerDatabase.get(getPlayerCommand.getPlayerId());
+        return playerDatabase.getExistingPlayer(getPlayerCommand.getPlayerId())
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Player not found for id ", getPlayerCommand.getPlayerId())));
     }
 }
