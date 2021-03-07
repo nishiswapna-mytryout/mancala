@@ -1,4 +1,4 @@
-package org.example.infrastructure;
+package org.example.config;
 
 import org.example.domain.player.core.ports.PlayerFacade;
 import org.example.domain.player.core.ports.incoming.AddNewPlayer;

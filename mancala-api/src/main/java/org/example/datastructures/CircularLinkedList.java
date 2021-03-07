@@ -1,9 +1,5 @@
 package org.example.datastructures;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.example.domain.Pit;
-
 import java.util.function.Supplier;
 
 public class CircularLinkedList<T> {

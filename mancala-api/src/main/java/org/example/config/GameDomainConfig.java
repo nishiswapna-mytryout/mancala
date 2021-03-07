@@ -1,4 +1,4 @@
-package org.example.infrastructure;
+package org.example.config;
 
 import org.example.domain.GameBoardFeatures;
 import org.example.domain.game.core.ports.GamePlayFacade;
@@ -7,7 +7,7 @@ import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
 import org.example.domain.game.infrastructure.GamePlayDatabaseAdaptar;
 import org.example.domain.game.infrastructure.GamePlayRepository;
 import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
-import org.example.infrastructure.properties.GameProperties;
+import org.example.config.properties.GameProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

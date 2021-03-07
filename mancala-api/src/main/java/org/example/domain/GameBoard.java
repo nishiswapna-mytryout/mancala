@@ -3,6 +3,9 @@ package org.example.domain;
 import lombok.Getter;
 import org.example.datastructures.CircularLinkedList;
 import org.example.datastructures.Node;
+import org.example.domain.game.core.model.BigPit;
+import org.example.domain.game.core.model.Pit;
+import org.example.domain.game.core.model.SmallPit;
 
 import java.util.HashMap;
 import java.util.List;

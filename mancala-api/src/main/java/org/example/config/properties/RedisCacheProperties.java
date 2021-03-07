@@ -1,4 +1,4 @@
-package org.example.infrastructure.properties;
+package org.example.config.properties;
 
 import lombok.Getter;
 import lombok.Setter;

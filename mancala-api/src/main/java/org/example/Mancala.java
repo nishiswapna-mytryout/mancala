@@ -7,7 +7,7 @@ import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
 @EnableCaching
-@ConfigurationPropertiesScan("org.example.infrastructure.properties")
+@ConfigurationPropertiesScan("org.example.config.properties")
 public class Mancala {
     public static void main(String[] args) {
         SpringApplication.run(Mancala.class, args);

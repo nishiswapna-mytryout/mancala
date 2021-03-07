@@ -1,6 +1,6 @@
-package org.example.infrastructure;
+package org.example.config;
 
-import org.example.infrastructure.properties.RedisCacheProperties;
+import org.example.config.properties.RedisCacheProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheManager;

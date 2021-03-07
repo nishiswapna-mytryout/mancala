@@ -3,6 +3,7 @@ package org.example.domain;
 import lombok.Getter;
 import org.example.datastructures.CircularLinkedList;
 import org.example.datastructures.Node;
+import org.example.domain.game.core.model.Pit;
 import org.example.domain.game.core.model.PlayerSide;
 import org.example.domain.interfaces.PitBehavior;
 

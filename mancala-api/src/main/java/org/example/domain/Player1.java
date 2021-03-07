@@ -2,6 +2,8 @@ package org.example.domain;
 
 import lombok.Getter;
 import lombok.NonNull;
+import org.example.domain.game.core.model.BigPit;
+import org.example.domain.game.core.model.SmallPit;
 
 import java.util.ArrayList;
 import java.util.List;

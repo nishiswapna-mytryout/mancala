@@ -3,6 +3,8 @@ package org.example.domain;
 import lombok.extern.slf4j.Slf4j;
 import org.example.domain.exceptions.GameDrawException;
 import org.example.domain.exceptions.GameNotOverException;
+import org.example.domain.game.core.model.Pit;
+import org.example.domain.game.core.model.SmallPit;
 
 @Slf4j
 public class TheGame {

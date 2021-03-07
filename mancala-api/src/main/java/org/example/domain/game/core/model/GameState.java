@@ -1,10 +1,7 @@
 package org.example.domain.game.core.model;
 
 import lombok.*;
-import org.example.domain.BigPit;
 import org.example.domain.GameBoardFeatures;
-import org.example.domain.Pit;
-import org.example.domain.SmallPit;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
