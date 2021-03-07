@@ -3,10 +3,10 @@ package org.example.domain;
 import lombok.Getter;
 import org.example.datastructures.CircularLinkedList;
 import org.example.datastructures.Node;
+import org.example.domain.game.core.model.PlayerSide;
 import org.example.domain.interfaces.PitBehavior;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 public class GameBoardFeatures {
@@ -36,6 +36,12 @@ public class GameBoardFeatures {
      * GamePit Navigation for sowing right in counter clockwise direction
      */
     private final CircularLinkedList<String> gamePitNavigation;
+
+
+    /**
+     * GamePit Mapping for oppsoite pit capture
+     */
+    private final Map<PlayerSide, List<String>> pitSideMapping;
 
     private GameBoardFeatures(int gameStoneCount) {
 
@@ -70,6 +76,11 @@ public class GameBoardFeatures {
             put("B4", "A3");
             put("B5", "A2");
             put("B6", "A1");
+        }};
+
+        pitSideMapping = new HashMap<PlayerSide, List<String>>() {{
+            put(PlayerSide.SideA, Arrays.asList("A1", "A2", "A3", "A4", "A5", "A6", "AL"));
+            put(PlayerSide.SideB, Arrays.asList("B1", "B2", "B3", "B4", "B5", "B6", "BL"));
         }};
 
         this.gamePitNavigation = new CircularLinkedList<>();
@@ -107,11 +118,32 @@ public class GameBoardFeatures {
         return (SmallPit) allPits.get(oppositePitPosition);
     }
 
-    public Pit getNextPit(String pitPosition) {
+    public Pit getNextPit(String pitPosition, PlayerSide playingSide) {
         PitBehavior.validatePitPosition(pitPosition);
         final Node<String> currentPosition = gamePitNavigation
                 .getNodeElseThrow(pitPosition, () -> new IllegalArgumentException("Current Position cannot be null or empty, issue with navigation setup"));
-        return allPits.get(currentPosition.getNextNode().getValue());
+
+        Pit nextpit = allPits.get(currentPosition.getNextNode().getValue());
+
+        if (nextpit instanceof BigPit
+                && !pitSideMapping.get(playingSide).contains(nextpit.getPitPosition())) {
+            return allPits.get(currentPosition.getNextNode()
+                    .getNextNode()
+                    .getValue());
+        } else {
+            return nextpit;
+        }
     }
 
+    public boolean belongsToPlayingSide(Pit lastPit, PlayerSide movingPlayerSide) {
+        return pitSideMapping.get(movingPlayerSide).contains(lastPit.getPitPosition());
+    }
+
+    public BigPit getBigPit(PlayerSide movingPlayerSide) {
+        String bigPitPosition = pitSideMapping.get(movingPlayerSide)
+                .stream()
+                .filter(pitPosition -> pitPosition.contains("L"))
+                .findFirst().orElseThrow(() -> new IllegalStateException("No Big Pit configured"));
+        return (BigPit) allPits.get(bigPitPosition);
+    }
 }

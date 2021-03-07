@@ -1,8 +1,10 @@
 package org.example.domain.game.core.model;
 
 import lombok.*;
+import org.example.domain.BigPit;
 import org.example.domain.GameBoardFeatures;
 import org.example.domain.Pit;
+import org.example.domain.SmallPit;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -56,7 +58,56 @@ public class GameState implements Serializable {
 
     public void sowByPlayer(String movingPlayerId, String pickPosition, GameBoardFeatures gameBoardFeatures) {
 
+        Pit pit = gameBoardFeatures.getAllPits().get(pickPosition);
 
+        PlayerSide movingPlayerSide = this.playerStates.stream()
+                .filter(playerState -> playerState.getPlayerId().equals(movingPlayerId))
+                .findFirst().map(PlayerState::getPlayerSide)
+                .orElseThrow(() -> new IllegalStateException("Invalid player side"));
+
+        if (pit instanceof SmallPit) {
+            int pickedStones = ((SmallPit) pit).pick();
+            String startPosition = pickPosition;
+            for (int i = 0; i < pickedStones; i++) {
+                Pit nextPit = gameBoardFeatures.getNextPit(startPosition, movingPlayerSide);
+                nextPit.sow(1);
+                startPosition = nextPit.getPitPosition();
+            }
+
+            Pit lastPit = gameBoardFeatures.getAllPits().get(startPosition);
+
+            if (lastPit instanceof SmallPit
+                    && gameBoardFeatures.belongsToPlayingSide(lastPit, movingPlayerSide)) {
+                if (lastPit.getCurrentStoneCount() == 1) {
+                    int lastStone = ((SmallPit) lastPit).pick();
+                    SmallPit oppositePit = gameBoardFeatures.getOppositePit(lastPit.getPitPosition());
+                    int capturedStones = oppositePit.pick();
+                    BigPit movingSideBigPit = gameBoardFeatures.getBigPit(movingPlayerSide);
+                    movingSideBigPit.sow(lastStone + capturedStones);
+                } else {
+                    this.switchPlayerTurn(movingPlayerSide);
+                }
+            } else if (lastPit instanceof BigPit && !gameBoardFeatures.belongsToPlayingSide(lastPit, movingPlayerSide)) {
+                this.switchPlayerTurn(movingPlayerSide);
+            }
+
+        }
+
+
+    }
+
+    private void switchPlayerTurn(PlayerSide movingPlayerSide) {
+        final PlayerState opponentSide = this.playerStates.stream()
+                .filter(playerState -> !playerState.getPlayerSide().equals(movingPlayerSide))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("There has to be one player in oppoenet"));
+
+        final PlayerState playingSide = this.playerStates.stream()
+                .filter(playerState -> !playerState.getPlayerSide().equals(movingPlayerSide))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("There has to be one player in oppoenet"));
+        playingSide.setPlayerTurn(false);
+        opponentSide.setPlayerTurn(true);
     }
 
 

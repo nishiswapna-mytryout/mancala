@@ -14,7 +14,7 @@ public class PlayerState implements Serializable {
 
     private final String playerId;
     @Setter
-    private final boolean playerTurn;
+    private boolean playerTurn;
     private final PlayerSide playerSide;
 
 }
