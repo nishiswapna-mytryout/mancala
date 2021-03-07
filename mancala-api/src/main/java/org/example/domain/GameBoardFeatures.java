@@ -31,7 +31,7 @@ public class GameBoardFeatures {
 
 
     /**
-     * GamePit Mapping for oppsoite pit capture
+     * GamePit Mapping for opposite pit capture
      */
     private final Map<String, String> gamePitMapping;
     /**
@@ -41,7 +41,7 @@ public class GameBoardFeatures {
 
 
     /**
-     * GamePit Mapping for oppsoite pit capture
+     * GamePit Mapping for opposite pit capture
      */
     private final Map<PlayerSide, List<String>> pitSideMapping;
 
@@ -90,7 +90,7 @@ public class GameBoardFeatures {
      * This provided the opposite small pit of the current position
      *
      * @param pitPosition
-     * @return SmallPit
+     * @return Opposite Pit Position
      * @throws IllegalArgumentException
      */
     public String getOppositePitPosition(String pitPosition) {
