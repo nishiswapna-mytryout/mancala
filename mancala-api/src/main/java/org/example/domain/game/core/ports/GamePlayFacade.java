@@ -3,7 +3,6 @@ package org.example.domain.game.core.ports;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.domain.GameBoardFeatures;
-import org.example.domain.Pit;
 import org.example.domain.game.core.model.GameState;
 import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
@@ -13,7 +12,6 @@ import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
 import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Slf4j
