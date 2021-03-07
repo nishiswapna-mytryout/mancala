@@ -8,11 +8,10 @@ import java.util.List;
 
 @AllArgsConstructor
 @Getter
-public class GameStateResponse {
+public class ActiveGameStateResponse {
 
     private final String gameId;
     private final List<Pit> pitState;
-    private final boolean hasGameEnded;
-    private final List<PlayerScore> playerScores ;
-
+    private final String playerIdTurn;
+    private final String playerIdOpponent;
 }

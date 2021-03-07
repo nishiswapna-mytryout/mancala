@@ -1,8 +1,10 @@
 package org.example.domain.game.application;
 
 import lombok.AllArgsConstructor;
+import org.example.domain.game.core.model.command.GetGameStatusCommand;
 import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
+import org.example.domain.game.core.model.output.ActiveGameStateResponse;
 import org.example.domain.game.core.model.output.GameStateResponse;
 import org.example.domain.game.core.ports.incoming.GamePlay;
 import org.springframework.http.MediaType;
@@ -21,24 +23,26 @@ public class GameController {
     private final GamePlay gamePlay;
 
     @GetMapping(path = "game", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GameStateResponse> startGame(@RequestParam("playerIdA") final String playerIdA, @RequestParam("playerIdB") final String playerIdB) {
-        GameStateResponse gameStateResponse = gamePlay.initialize(new NewGameCommand(playerIdA, playerIdB));
-        return gameStateResponse != null ? ResponseEntity.ok().body(gameStateResponse) :
+    public ResponseEntity<ActiveGameStateResponse> startGame(@RequestParam("playerIdA") final String playerIdA, @RequestParam("playerIdB") final String playerIdB) {
+        ActiveGameStateResponse activeGameStateResponse = gamePlay.initialize(new NewGameCommand(playerIdA, playerIdB));
+        return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
                 ResponseEntity.badRequest().build();
     }
 
     @GetMapping(path = "game/{id}/pits/{pitlocation}/player/{playerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<GameStateResponse> sow(@PathVariable("id") final String gameId, @PathVariable("pitlocation") final String pitPosition, @PathVariable("playerId") final String movingPlayer) {
+    public ResponseEntity<ActiveGameStateResponse> sow(@PathVariable("id") final String gameId, @PathVariable("pitlocation") final String pitPosition, @PathVariable("playerId") final String movingPlayer) {
 
-        GameStateResponse gameStateResponse = gamePlay.sow(new SowCommand(gameId, pitPosition, movingPlayer));
-        return gameStateResponse != null ? ResponseEntity.ok().body(gameStateResponse) :
+        ActiveGameStateResponse activeGameStateResponse = gamePlay.sow(new SowCommand(gameId, pitPosition, movingPlayer));
+        return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
                 ResponseEntity.badRequest().build();
 
     }
-//
-//    @PostMapping("game/status/{id}")
-//    public ResponseEntity<GameStateResponse> gameStatus(@PathVariable("id") final String gameId) {
-//        return ResponseEntity.ok().body(null);
-//    }
+
+    @GetMapping("game/status/{id}")
+    public ResponseEntity<GameStateResponse> gameStatus(@PathVariable("id") final String gameId) {
+        GameStateResponse gameStateResponse = gamePlay.getStatus(new GetGameStatusCommand(gameId));
+        return gameStateResponse != null ? ResponseEntity.ok().body(gameStateResponse) :
+                ResponseEntity.badRequest().build();
+    }
 
 }

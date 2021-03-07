@@ -125,10 +125,9 @@ public class GameBoardFeatures {
     }
 
     public String getBigPitForPlayingSide(PlayerSide movingPlayerSide) {
-        String bigPitPosition = pitSideMapping.get(movingPlayerSide)
+        return pitSideMapping.get(movingPlayerSide)
                 .stream()
                 .filter(pitPosition -> pitPosition.contains("L"))
                 .findFirst().orElseThrow(() -> new IllegalStateException("No Big Pit configured"));
-        return bigPitPosition;
     }
 }
