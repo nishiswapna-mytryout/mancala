@@ -5,6 +5,7 @@ import org.example.datastructures.CircularLinkedList;
 import org.example.datastructures.Node;
 import org.example.domain.game.core.model.Pit;
 import org.example.domain.game.core.model.PlayerSide;
+import org.example.domain.game.core.model.exceptions.GameIllegalStateException;
 import org.example.domain.interfaces.PitBehavior;
 
 import java.util.Arrays;
@@ -129,6 +130,6 @@ public class GameBoardFeatures {
         return pitSideMapping.get(movingPlayerSide)
                 .stream()
                 .filter(pitPosition -> pitPosition.contains("L"))
-                .findFirst().orElseThrow(() -> new IllegalStateException("No Big Pit configured"));
+                .findFirst().orElseThrow(() -> new GameIllegalStateException("No Big Pit configured"));
     }
 }

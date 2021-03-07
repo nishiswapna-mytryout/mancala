@@ -3,7 +3,6 @@ package org.example.domain.game.infrastructure;
 import lombok.AllArgsConstructor;
 import org.example.domain.game.core.model.GameState;
 import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
-import org.example.domain.game.infrastructure.exceptions.StorageNotFoundException;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 

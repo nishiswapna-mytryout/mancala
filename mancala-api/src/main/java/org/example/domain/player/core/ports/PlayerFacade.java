@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.example.domain.player.core.model.Player;
 import org.example.domain.player.core.model.command.AddPlayerCommand;
 import org.example.domain.player.core.model.command.GetPlayerCommand;
+import org.example.domain.player.core.model.exceptions.PlayerNotFoundException;
 import org.example.domain.player.core.model.output.PlayerIdentifier;
 import org.example.domain.player.core.model.output.PlayerResponse;
 import org.example.domain.player.core.ports.incoming.AddNewPlayer;
@@ -24,6 +25,6 @@ public class PlayerFacade implements AddNewPlayer, GetPlayer {
     @Override
     public PlayerResponse handleCommand(GetPlayerCommand getPlayerCommand) {
         return playerDatabase.getExistingPlayer(getPlayerCommand.getPlayerId())
-                .orElseThrow(() -> new IllegalArgumentException(String.format("Player not found for id ", getPlayerCommand.getPlayerId())));
+                .orElseThrow(() -> new PlayerNotFoundException(String.format("Player not found for id %s", getPlayerCommand.getPlayerId())));
     }
 }

@@ -2,6 +2,7 @@ package org.example.domain.game.core.model;
 
 import lombok.*;
 import org.example.domain.GameBoardFeatures;
+import org.example.domain.game.core.model.exceptions.GameIllegalStateException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -86,7 +87,7 @@ public class GameState implements Serializable {
                 .filter(pit -> pit instanceof BigPit)
                 .findFirst()
                 .map(pit -> (BigPit) pit)
-                .orElseThrow(() -> new IllegalStateException("Something went wrong, no BigPit find on this side"));
+                .orElseThrow(() -> new GameIllegalStateException("Something went wrong, no BigPit find on this side"));
 
     }
 
@@ -94,14 +95,14 @@ public class GameState implements Serializable {
         return this
                 .getPlayerStates().stream()
                 .filter(PlayerState::isPlayerTurn).findFirst()
-                .map(PlayerState::getPlayerId).orElseThrow(() -> new IllegalStateException("There has to be one player with valid turn"));
+                .map(PlayerState::getPlayerId).orElseThrow(() -> new GameIllegalStateException("There has to be one player with valid turn"));
     }
 
     public String getPlayerIdOpponent() {
         return this
                 .getPlayerStates().stream()
                 .filter(playerState -> !playerState.isPlayerTurn()).findFirst()
-                .map(PlayerState::getPlayerId).orElseThrow(() -> new IllegalStateException("There has to be one player as opponent turn"));
+                .map(PlayerState::getPlayerId).orElseThrow(() -> new GameIllegalStateException("There has to be one player as opponent turn"));
 
     }
 
@@ -112,7 +113,7 @@ public class GameState implements Serializable {
         final PlayerSide movingPlayerSide = this.playerStates.stream()
                 .filter(playerState -> playerState.getPlayerId().equals(movingPlayerId))
                 .findFirst().map(PlayerState::getPlayerSide)
-                .orElseThrow(() -> new IllegalStateException("Invalid player side"));
+                .orElseThrow(() -> new GameIllegalStateException("Invalid player side"));
 
         if (pit instanceof SmallPit) {
             int pickedStones = ((SmallPit) pit).pick();
@@ -152,12 +153,12 @@ public class GameState implements Serializable {
         final PlayerState opponentSide = this.playerStates.stream()
                 .filter(playerState -> !playerState.getPlayerSide().equals(movingPlayerSide))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("There has to be one player in oppoenet"));
+                .orElseThrow(() -> new GameIllegalStateException("There has to be one player in oppoenet"));
 
         final PlayerState playingSide = this.playerStates.stream()
                 .filter(playerState -> playerState.getPlayerSide().equals(movingPlayerSide))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("There has to be one player in oppoenet"));
+                .orElseThrow(() -> new GameIllegalStateException("There has to be one player in oppoenet"));
         playingSide.setPlayerTurn(false);
         opponentSide.setPlayerTurn(true);
     }
