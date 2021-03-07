@@ -3,6 +3,7 @@ package org.example.domain.game.core.ports;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.domain.GameBoardFeatures;
+import org.example.domain.Pit;
 import org.example.domain.game.core.model.GameState;
 import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
@@ -10,6 +11,9 @@ import org.example.domain.game.core.model.output.GameStateResponse;
 import org.example.domain.game.core.ports.incoming.GamePlay;
 import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
 import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
+
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Slf4j
@@ -37,7 +41,7 @@ public class GamePlayFacade implements GamePlay {
         }
 
         return new GameStateResponse(gameState.getGameId()
-                , gameState.getPitState()
+                , new ArrayList<>(gameState.getAllPits().values())
                 , gameState.getPlayerIdTurn()
                 , gameState.getPlayerIdOpponent()
                 , false);
@@ -61,6 +65,8 @@ public class GamePlayFacade implements GamePlay {
 
         gameState.sowByPlayer(sowCommand.getMovingPlayer(), sowCommand.getPickPosition(), gameBoardFeatures);
 
+        log.warn(gameState.toString());
+
         final GameState newGameState = gamePlayDatabase.update(gameState);
 
         if (newGameState == null) {
@@ -68,7 +74,7 @@ public class GamePlayFacade implements GamePlay {
         }
 
         return new GameStateResponse(newGameState.getGameId()
-                , newGameState.getPitState()
+                , new ArrayList<>(gameState.getAllPits().values())
                 , newGameState.getPlayerIdTurn()
                 , newGameState.getPlayerIdOpponent()
                 , false);

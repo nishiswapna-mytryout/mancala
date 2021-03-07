@@ -6,7 +6,10 @@ import org.example.datastructures.Node;
 import org.example.domain.game.core.model.PlayerSide;
 import org.example.domain.interfaces.PitBehavior;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class GameBoardFeatures {
@@ -23,11 +26,10 @@ public class GameBoardFeatures {
 
     }
 
-    /**
-     * The mapping between pit position and Actual Pits
-     */
     @Getter
-    private final Map<String, Pit> allPits;
+    private final int stoneCountPerPit;
+
+
     /**
      * GamePit Mapping for oppsoite pit capture
      */
@@ -43,25 +45,9 @@ public class GameBoardFeatures {
      */
     private final Map<PlayerSide, List<String>> pitSideMapping;
 
-    private GameBoardFeatures(int gameStoneCount) {
+    private GameBoardFeatures(final int stoneCountPerPit) {
 
-        this.allPits = new HashMap<String, Pit>() {{
-            put("A1", new SmallPit("A1", gameStoneCount));
-            put("A2", new SmallPit("A2", gameStoneCount));
-            put("A3", new SmallPit("A3", gameStoneCount));
-            put("A4", new SmallPit("A4", gameStoneCount));
-            put("A5", new SmallPit("A5", gameStoneCount));
-            put("A6", new SmallPit("A6", gameStoneCount));
-            put("AL", new BigPit("AL"));
-            put("B1", new SmallPit("B1", gameStoneCount));
-            put("B2", new SmallPit("B2", gameStoneCount));
-            put("B3", new SmallPit("B3", gameStoneCount));
-            put("B4", new SmallPit("B4", gameStoneCount));
-            put("B5", new SmallPit("B5", gameStoneCount));
-            put("B6", new SmallPit("B6", gameStoneCount));
-            put("BL", new BigPit("BL"));
-        }};
-
+        this.stoneCountPerPit = stoneCountPerPit;
 
         this.gamePitMapping = new HashMap<String, String>() {{
             put("A1", "B6");
@@ -107,31 +93,30 @@ public class GameBoardFeatures {
      * @return SmallPit
      * @throws IllegalArgumentException
      */
-    public SmallPit getOppositePit(String pitPosition) {
+    public String getOppositePitPosition(String pitPosition) {
         PitBehavior.validatePitPosition(pitPosition);
 
         if (!this.gamePitMapping.containsKey(pitPosition)) {
             throw new IllegalArgumentException(String.format("Wrong Pit position %s", pitPosition));
 
         }
-        String oppositePitPosition = this.gamePitMapping.get(pitPosition);
-        return (SmallPit) allPits.get(oppositePitPosition);
+        return this.gamePitMapping.get(pitPosition);
     }
 
-    public Pit getNextPit(String pitPosition, PlayerSide playingSide) {
+    public String getNextPit(String pitPosition, PlayerSide playingSide) {
         PitBehavior.validatePitPosition(pitPosition);
         final Node<String> currentPosition = gamePitNavigation
                 .getNodeElseThrow(pitPosition, () -> new IllegalArgumentException("Current Position cannot be null or empty, issue with navigation setup"));
 
-        Pit nextpit = allPits.get(currentPosition.getNextNode().getValue());
+        String nextPitPosition = currentPosition.getNextNode().getValue();
 
-        if (nextpit instanceof BigPit
-                && !pitSideMapping.get(playingSide).contains(nextpit.getPitPosition())) {
-            return allPits.get(currentPosition.getNextNode()
+        if (nextPitPosition.contains("L")
+                && !pitSideMapping.get(playingSide).contains(nextPitPosition)) {
+            return currentPosition.getNextNode()
                     .getNextNode()
-                    .getValue());
+                    .getValue();
         } else {
-            return nextpit;
+            return nextPitPosition;
         }
     }
 
@@ -139,11 +124,11 @@ public class GameBoardFeatures {
         return pitSideMapping.get(movingPlayerSide).contains(lastPit.getPitPosition());
     }
 
-    public BigPit getBigPit(PlayerSide movingPlayerSide) {
+    public String getBigPitForPlayingSide(PlayerSide movingPlayerSide) {
         String bigPitPosition = pitSideMapping.get(movingPlayerSide)
                 .stream()
                 .filter(pitPosition -> pitPosition.contains("L"))
                 .findFirst().orElseThrow(() -> new IllegalStateException("No Big Pit configured"));
-        return (BigPit) allPits.get(bigPitPosition);
+        return bigPitPosition;
     }
 }

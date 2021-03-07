@@ -9,9 +9,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 @Document(collection = "game")
@@ -25,9 +26,13 @@ public class GameState implements Serializable {
     @NonNull
     private final List<PlayerState> playerStates;
 
+
+    /**
+     * The mapping between pit position and Actual Pits
+     **/
     @NonNull
     @Getter
-    private final List<Pit> pitState;
+    private final Map<String, Pit> allPits;
 
     private static GameState gameState;
 
@@ -36,7 +41,27 @@ public class GameState implements Serializable {
         PlayerState playerStateA = new PlayerState(playerIdA, true, PlayerSide.SideA);
         PlayerState playerStateB = new PlayerState(playerIdB, false, PlayerSide.SideA);
 
-        gameState = new GameState(Arrays.asList(playerStateA, playerStateB), new ArrayList<>(gameBoardFeatures.getAllPits().values()));
+        int gameStoneCount = gameBoardFeatures.getStoneCountPerPit();
+
+        HashMap<String, Pit> pitSetUp = new HashMap<String, Pit>() {{
+
+            put("A1", new SmallPit("A1", gameStoneCount));
+            put("A2", new SmallPit("A2", gameStoneCount));
+            put("A3", new SmallPit("A3", gameStoneCount));
+            put("A4", new SmallPit("A4", gameStoneCount));
+            put("A5", new SmallPit("A5", gameStoneCount));
+            put("A6", new SmallPit("A6", gameStoneCount));
+            put("AL", new BigPit("AL"));
+            put("B1", new SmallPit("B1", gameStoneCount));
+            put("B2", new SmallPit("B2", gameStoneCount));
+            put("B3", new SmallPit("B3", gameStoneCount));
+            put("B4", new SmallPit("B4", gameStoneCount));
+            put("B5", new SmallPit("B5", gameStoneCount));
+            put("B6", new SmallPit("B6", gameStoneCount));
+            put("BL", new BigPit("BL"));
+        }};
+
+        gameState = new GameState(Arrays.asList(playerStateA, playerStateB), pitSetUp);
         return gameState;
 
     }
@@ -58,7 +83,7 @@ public class GameState implements Serializable {
 
     public void sowByPlayer(String movingPlayerId, String pickPosition, GameBoardFeatures gameBoardFeatures) {
 
-        Pit pit = gameBoardFeatures.getAllPits().get(pickPosition);
+        Pit pit = this.getAllPits().get(pickPosition);
 
         PlayerSide movingPlayerSide = this.playerStates.stream()
                 .filter(playerState -> playerState.getPlayerId().equals(movingPlayerId))
@@ -69,20 +94,20 @@ public class GameState implements Serializable {
             int pickedStones = ((SmallPit) pit).pick();
             String startPosition = pickPosition;
             for (int i = 0; i < pickedStones; i++) {
-                Pit nextPit = gameBoardFeatures.getNextPit(startPosition, movingPlayerSide);
+                Pit nextPit = this.getAllPits().get(gameBoardFeatures.getNextPit(startPosition, movingPlayerSide));
                 nextPit.sow(1);
                 startPosition = nextPit.getPitPosition();
             }
 
-            Pit lastPit = gameBoardFeatures.getAllPits().get(startPosition);
+            Pit lastPit = this.getAllPits().get(startPosition);
 
             if (lastPit instanceof SmallPit
                     && gameBoardFeatures.belongsToPlayingSide(lastPit, movingPlayerSide)) {
                 if (lastPit.getCurrentStoneCount() == 1) {
                     int lastStone = ((SmallPit) lastPit).pick();
-                    SmallPit oppositePit = gameBoardFeatures.getOppositePit(lastPit.getPitPosition());
+                    SmallPit oppositePit = (SmallPit) this.getAllPits().get(gameBoardFeatures.getOppositePitPosition(lastPit.getPitPosition()));
                     int capturedStones = oppositePit.pick();
-                    BigPit movingSideBigPit = gameBoardFeatures.getBigPit(movingPlayerSide);
+                    BigPit movingSideBigPit = (BigPit) this.getAllPits().get(gameBoardFeatures.getBigPitForPlayingSide(movingPlayerSide));
                     movingSideBigPit.sow(lastStone + capturedStones);
                 } else {
                     this.switchPlayerTurn(movingPlayerSide);
@@ -125,17 +150,4 @@ public class GameState implements Serializable {
 
     }
 
-
-//    public Pit sowRightAllStonesInHandAndGiveLastPosition(final String startPitPosition, final PlayerTurn playerTurn, final int stones){
-//
-//        String currentPitPosition = startPitPosition;
-//        for (int i = 0; i < stones; i++) {
-//            Pit nextPit = this.getNextPit(playerTurn, currentPitPosition);
-//            nextPit.sow(1);
-//            currentPitPosition = nextPit.getPitPosition();
-//        }
-//
-//        return this.getAllPits().get(currentPitPosition);
-//
-//    }
 }
