@@ -154,9 +154,8 @@ public class GameState implements Serializable {
     }
 
     private void switchPlayerTurn(@NonNull final String playingPlayerId) {
-        this.playerStates.forEach(playerState -> {
-            playerState.setMyTurn(!playingPlayerId.equals(playerState.getPlayerId()));
-        });
+        this.playerStates.forEach(playerState ->
+                playerState.setMyTurn(!playingPlayerId.equals(playerState.getPlayerId())));
     }
 
 
@@ -189,31 +188,23 @@ public class GameState implements Serializable {
     }
 
     public GameState checkStatus() {
-        final int sideAStoneCount = getSmallPits(PlayerSide.SideA)
-                .stream()
-                .map(Pit::getCurrentStoneCount)
-                .reduce(0, Integer::sum);
 
-        final int sideBStoneCount = getSmallPits(PlayerSide.SideB)
-                .stream()
-                .map(Pit::getCurrentStoneCount)
-                .reduce(0, Integer::sum);
-
-        PlayerSide opponentSide = null;
-
-        if (sideAStoneCount == 0) {
-            opponentSide = PlayerSide.SideB;
-        } else if (sideBStoneCount == 0) {
-            opponentSide = PlayerSide.SideA;
-        }
-
-        if (opponentSide != null) {
-
-            emptyOpponentPitsToOpponentBigPit(opponentSide);
+        if (isSideSmallPitAreEmpty(PlayerSide.SideA)) {
+            emptyOpponentPitsToOpponentBigPit(PlayerSide.SideB);
+            this.setFinished(true);
+        } else if (isSideSmallPitAreEmpty(PlayerSide.SideB)) {
+            emptyOpponentPitsToOpponentBigPit(PlayerSide.SideA);
             this.setFinished(true);
         }
 
         return this;
+    }
+
+    private boolean isSideSmallPitAreEmpty(@NonNull final PlayerSide sideA) {
+        return getSmallPits(sideA)
+                .stream()
+                .map(Pit::getCurrentStoneCount)
+                .reduce(0, Integer::sum) == 0;
     }
 
     private void emptyOpponentPitsToOpponentBigPit(@NonNull final PlayerSide opponentSide) {
