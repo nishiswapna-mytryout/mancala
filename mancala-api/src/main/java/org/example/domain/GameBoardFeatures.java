@@ -1,32 +1,22 @@
 package org.example.domain;
 
 import lombok.Getter;
+import lombok.NonNull;
 import org.example.datastructures.CircularLinkedList;
 import org.example.datastructures.Node;
-import org.example.domain.game.core.model.Pit;
 import org.example.domain.game.core.model.PlayerSide;
 import org.example.domain.game.core.model.exceptions.GameIllegalStateException;
-import org.example.domain.interfaces.PitBehavior;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.example.domain.interfaces.PitBehavior.isBigPit;
+import static org.example.domain.interfaces.PitBehavior.validatePitPosition;
+
 
 public class GameBoardFeatures {
-
-    private static GameBoardFeatures gameBoardFeatures;
-
-
-    public static GameBoardFeatures initializeGame(int gameStoneCount) {
-
-        if (gameBoardFeatures == null) {
-            gameBoardFeatures = new GameBoardFeatures(gameStoneCount);
-        }
-        return gameBoardFeatures;
-
-    }
 
     @Getter
     private final int stoneCountPerPit;
@@ -47,7 +37,7 @@ public class GameBoardFeatures {
      */
     private final Map<PlayerSide, List<String>> pitSideMapping;
 
-    private GameBoardFeatures(final int stoneCountPerPit) {
+    public GameBoardFeatures(final int stoneCountPerPit) {
 
         this.stoneCountPerPit = stoneCountPerPit;
 
@@ -95,8 +85,8 @@ public class GameBoardFeatures {
      * @return Opposite Pit Position
      * @throws IllegalArgumentException
      */
-    public String getOppositePitPosition(String pitPosition) {
-        PitBehavior.validatePitPosition(pitPosition);
+    public String getOppositePitPosition(final String pitPosition) {
+        validatePitPosition(pitPosition);
 
         if (!this.gamePitMapping.containsKey(pitPosition)) {
             throw new IllegalArgumentException(String.format("Wrong Pit position %s", pitPosition));
@@ -105,15 +95,15 @@ public class GameBoardFeatures {
         return this.gamePitMapping.get(pitPosition);
     }
 
-    public String getNextPit(String pitPosition, PlayerSide playingSide) {
-        PitBehavior.validatePitPosition(pitPosition);
+    public String getNextPit(final String pitPosition, final PlayerSide playingSide) {
+        validatePitPosition(pitPosition);
         final Node<String> currentPosition = gamePitNavigation
                 .getNodeElseThrow(pitPosition, () -> new IllegalArgumentException("Current Position cannot be null or empty, issue with navigation setup"));
 
         String nextPitPosition = currentPosition.getNextNode().getValue();
 
-        if (nextPitPosition.contains("L")
-                && !pitSideMapping.get(playingSide).contains(nextPitPosition)) {
+        if (isBigPit(nextPitPosition)
+                && !pitPositionBelongsToPlayingSide(nextPitPosition, playingSide)) {
             return currentPosition.getNextNode()
                     .getNextNode()
                     .getValue();
@@ -122,11 +112,11 @@ public class GameBoardFeatures {
         }
     }
 
-    public boolean belongsToPlayingSide(Pit lastPit, PlayerSide movingPlayerSide) {
-        return pitSideMapping.get(movingPlayerSide).contains(lastPit.getPitPosition());
+    public boolean pitPositionBelongsToPlayingSide(@NonNull final String pitPosition, @NonNull final PlayerSide playingSide) {
+        return pitSideMapping.get(playingSide).contains(pitPosition);
     }
 
-    public String getBigPitForPlayingSide(PlayerSide movingPlayerSide) {
+    public String getBigPitForPlayingSide(@NonNull final PlayerSide movingPlayerSide) {
         return pitSideMapping.get(movingPlayerSide)
                 .stream()
                 .filter(pitPosition -> pitPosition.contains("L"))

@@ -10,5 +10,9 @@ public interface PitBehavior extends Serializable {
         }
     }
 
+    static boolean isBigPit(final String pitPosition) {
+        return pitPosition.contains("L");
+    }
+
 
 }

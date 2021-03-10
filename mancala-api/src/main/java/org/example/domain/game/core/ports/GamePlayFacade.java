@@ -83,7 +83,7 @@ public class GamePlayFacade implements GamePlay {
         final GameState gameState = gamePlayDatabase.load(getGameStatusCommand.getGameId())
                 .orElseThrow(() -> new GameNotFoundException(String.format("Unknown active game %s", getGameStatusCommand.getGameId())));
 
-        GameState newGameState = gameState.decideStatus();
+        GameState newGameState = gameState.checkStatus();
 
         final GameState updatedGameState = gamePlayDatabase.update(newGameState);
 

@@ -20,7 +20,7 @@ public class GameBoard {
     private final Map<String, Pit> allPits;
     private final List<SmallPit> sideA;
     private final List<SmallPit> sideB;
-    private final Map<String, String> gamePitMapping;
+    private final Map<String, String> oppositePitMapping;
     private final CircularLinkedList<String> gamePitNavigation;
     private final BigPit bigPitA;
     private final BigPit bigPitB;
@@ -53,7 +53,7 @@ public class GameBoard {
             put("BL", new BigPit("BL"));
         }};
 
-        this.gamePitMapping = new HashMap<String, String>() {{
+        this.oppositePitMapping = new HashMap<String, String>() {{
             put("A1", "B6");
             put("A2", "B5");
             put("A3", "B4");
@@ -109,11 +109,11 @@ public class GameBoard {
      * @throws IllegalArgumentException
      */
     public SmallPit getOppositePit(String pitPosition) {
-        if (!this.gamePitMapping.containsKey(pitPosition)) {
+        if (!this.oppositePitMapping.containsKey(pitPosition)) {
             throw new IllegalArgumentException(String.format("Wrong Pit position %s", pitPosition));
 
         }
-        String oppositePitPosition = this.gamePitMapping.get(pitPosition);
+        String oppositePitPosition = this.oppositePitMapping.get(pitPosition);
         return (SmallPit) allPits.get(oppositePitPosition);
     }
 

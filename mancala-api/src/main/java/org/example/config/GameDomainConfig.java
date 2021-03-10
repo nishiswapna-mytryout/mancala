@@ -27,7 +27,7 @@ public class GameDomainConfig {
 
     @Bean
     public GameBoardFeatures gameBoardFeatures(final GameProperties gameProperties) {
-        return GameBoardFeatures.initializeGame(gameProperties.getStoneCount());
+        return new GameBoardFeatures(gameProperties.getStoneCount());
     }
 
 }

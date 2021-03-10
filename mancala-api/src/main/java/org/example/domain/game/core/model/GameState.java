@@ -94,54 +94,39 @@ public class GameState implements Serializable {
     public String getPlayerIdTurn() {
         return this
                 .getPlayerStates().stream()
-                .filter(PlayerState::isPlayerTurn).findFirst()
+                .filter(PlayerState::isMyTurn).findFirst()
                 .map(PlayerState::getPlayerId).orElseThrow(() -> new GameIllegalStateException("There has to be one player with valid turn"));
     }
 
     public String getPlayerIdOpponent() {
         return this
                 .getPlayerStates().stream()
-                .filter(playerState -> !playerState.isPlayerTurn()).findFirst()
+                .filter(playerState -> !playerState.isMyTurn()).findFirst()
                 .map(PlayerState::getPlayerId).orElseThrow(() -> new GameIllegalStateException("There has to be one player as opponent turn"));
 
     }
 
     public GameState sow(String movingPlayerId, String pickPosition, GameBoardFeatures gameBoardFeatures) {
 
-        final Pit pit = this.getAllPits().get(pickPosition);
+        final SmallPit smallPit = (SmallPit) this.getAllPits().get(pickPosition);
 
         final PlayerSide movingPlayerSide = this.playerStates.stream()
-                .filter(playerState -> playerState.getPlayerId().equals(movingPlayerId))
+                .filter(playerState -> isMovingPlayer(movingPlayerId, playerState))
                 .findFirst().map(PlayerState::getPlayerSide)
                 .orElseThrow(() -> new GameIllegalStateException("Invalid player side"));
 
-        if (pit instanceof SmallPit) {
-            int pickedStones = ((SmallPit) pit).pick();
-            String startPosition = pickPosition;
-            for (int i = 0; i < pickedStones; i++) {
-                Pit nextPit = this.getAllPits().get(gameBoardFeatures.getNextPit(startPosition, movingPlayerSide));
-                nextPit.sow(1);
-                startPosition = nextPit.getPitPosition();
+        final String lastDroppedPosition = sowRightAllStonesFromPit(gameBoardFeatures, movingPlayerSide, smallPit);
+
+        Pit lastPit = this.getAllPits().get(lastDroppedPosition);
+
+        if (lastPit instanceof SmallPit
+                && gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide)) {
+            if (lastPit.getCurrentStoneCount() == 1) {
+                captureOpponentPitAndDropStonesToOwnBigPit(gameBoardFeatures, movingPlayerSide, lastPit);
+
+            } else {
+                this.switchPlayerTurn(movingPlayerId);
             }
-
-            Pit lastPit = this.getAllPits().get(startPosition);
-
-            if (lastPit instanceof SmallPit
-                    && gameBoardFeatures.belongsToPlayingSide(lastPit, movingPlayerSide)) {
-                if (lastPit.getCurrentStoneCount() == 1) {
-                    int lastStone = ((SmallPit) lastPit).pick();
-                    SmallPit oppositePit = (SmallPit) this.getAllPits().get(gameBoardFeatures.getOppositePitPosition(lastPit.getPitPosition()));
-                    int capturedStones = oppositePit.pick();
-                    BigPit movingSideBigPit = (BigPit) this.getAllPits().get(gameBoardFeatures.getBigPitForPlayingSide(movingPlayerSide));
-                    movingSideBigPit.sow(lastStone + capturedStones);
-
-                } else {
-                    this.switchPlayerTurn(movingPlayerSide);
-                }
-            } else if (lastPit instanceof BigPit && !gameBoardFeatures.belongsToPlayingSide(lastPit, movingPlayerSide)) {
-                this.switchPlayerTurn(movingPlayerSide);
-            }
-
         }
 
         return this;
@@ -149,64 +134,93 @@ public class GameState implements Serializable {
 
     }
 
-    private void switchPlayerTurn(final PlayerSide movingPlayerSide) {
-        final PlayerState opponentSide = this.playerStates.stream()
-                .filter(playerState -> !playerState.getPlayerSide().equals(movingPlayerSide))
-                .findFirst()
-                .orElseThrow(() -> new GameIllegalStateException("There has to be one player in oppoenet"));
+    private void captureOpponentPitAndDropStonesToOwnBigPit(GameBoardFeatures gameBoardFeatures, PlayerSide movingPlayerSide, Pit lastPit) {
+        int lastStone = ((SmallPit) lastPit).pick();
+        SmallPit oppositePit = (SmallPit) this.getAllPits().get(gameBoardFeatures.getOppositePitPosition(lastPit.getPitPosition()));
+        int capturedStones = oppositePit.pick();
+        BigPit movingSideBigPit = (BigPit) this.getAllPits().get(gameBoardFeatures.getBigPitForPlayingSide(movingPlayerSide));
+        movingSideBigPit.sow(lastStone + capturedStones);
+    }
 
-        final PlayerState playingSide = this.playerStates.stream()
-                .filter(playerState -> playerState.getPlayerSide().equals(movingPlayerSide))
-                .findFirst()
-                .orElseThrow(() -> new GameIllegalStateException("There has to be one player in oppoenet"));
-        playingSide.setPlayerTurn(false);
-        opponentSide.setPlayerTurn(true);
+    private String sowRightAllStonesFromPit(GameBoardFeatures gameBoardFeatures, PlayerSide movingPlayerSide, SmallPit pickPosition) {
+        String startPosition = pickPosition.getPitPosition();
+        int pickedStones = pickPosition.pick();
+        for (int i = 0; i < pickedStones; i++) {
+            Pit nextPit = this.getAllPits().get(gameBoardFeatures.getNextPit(startPosition, movingPlayerSide));
+            nextPit.sow(1);
+            startPosition = nextPit.getPitPosition();
+        }
+        return startPosition;
+    }
+
+    private void switchPlayerTurn(@NonNull final String playingPlayerId) {
+        this.playerStates.forEach(playerState -> {
+            playerState.setMyTurn(!playingPlayerId.equals(playerState.getPlayerId()));
+        });
     }
 
 
-    public void isPlayerMoveAllowed(final String movingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
+    public void isPlayerMoveAllowed(final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
         this.playerStates.stream()
-                .filter(playerState -> playerState.getPlayerId().equals(movingPlayer) && playerState.isPlayerTurn())
+                .filter(playerState -> isMovingPlayer(playingPlayer, playerState) && playerState.isMyTurn())
                 .findFirst()
                 .orElseThrow(exceptionSupplier);
     }
 
-    public void isPickPositionValid(final String pickPosition, final String movingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
+    private boolean isMovingPlayer(String movingPlayer, PlayerState playerState) {
+        return playerState.getPlayerId().equals(movingPlayer);
+    }
+
+    public void isPickPositionValid(final String pickPosition, final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
         this.playerStates.stream()
-                .filter(playerState -> playerState.getPlayerId().equals(movingPlayer) && pickPosition.indexOf(playerState.getPlayerSide().getGameSide()) == 0)
+                .filter(playerState -> isMovingPlayer(playingPlayer, playerState)
+                        && pickPositionIsFromPlayingSide(pickPosition, playerState)
+                        && pitPositionIsASmallPit(pickPosition))
                 .findFirst().orElseThrow(exceptionSupplier);
 
     }
 
-    public GameState decideStatus() {
-        final int sideACount = getSmallPits(PlayerSide.SideA)
+    private boolean pitPositionIsASmallPit(String pickPosition) {
+        return this.getAllPits().get(pickPosition) instanceof SmallPit;
+    }
+
+    private boolean pickPositionIsFromPlayingSide(String pickPosition, PlayerState playerState) {
+        return pickPosition.indexOf(playerState.getPlayerSide().getGameSide()) == 0;
+    }
+
+    public GameState checkStatus() {
+        final int sideAStoneCount = getSmallPits(PlayerSide.SideA)
                 .stream()
                 .map(Pit::getCurrentStoneCount)
                 .reduce(0, Integer::sum);
 
-        final int sideBCount = getSmallPits(PlayerSide.SideB)
+        final int sideBStoneCount = getSmallPits(PlayerSide.SideB)
                 .stream()
                 .map(Pit::getCurrentStoneCount)
                 .reduce(0, Integer::sum);
 
         PlayerSide opponentSide = null;
 
-        if (sideACount == 0) {
+        if (sideAStoneCount == 0) {
             opponentSide = PlayerSide.SideB;
-        } else if (sideBCount == 0) {
+        } else if (sideBStoneCount == 0) {
             opponentSide = PlayerSide.SideA;
         }
 
         if (opponentSide != null) {
 
-            final int opponentStonePicked = getSmallPits(opponentSide)
-                    .stream()
-                    .map(SmallPit::pick)
-                    .reduce(0, Integer::sum);
-            getBigPit(opponentSide).sow(opponentStonePicked);
+            emptyOpponentPitsToOpponentBigPit(opponentSide);
             this.setFinished(true);
         }
 
         return this;
+    }
+
+    private void emptyOpponentPitsToOpponentBigPit(@NonNull final PlayerSide opponentSide) {
+        final int opponentStonePicked = getSmallPits(opponentSide)
+                .stream()
+                .map(SmallPit::pick)
+                .reduce(0, Integer::sum);
+        getBigPit(opponentSide).sow(opponentStonePicked);
     }
 }
