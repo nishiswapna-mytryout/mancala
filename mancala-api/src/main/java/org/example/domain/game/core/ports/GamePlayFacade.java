@@ -45,8 +45,8 @@ public class GamePlayFacade implements GamePlay {
 
         return new ActiveGameStateResponse(gameState.getGameId()
                 , new ArrayList<>(gameState.getAllPits().values())
-                , gameState.getPlayerIdTurn()
-                , gameState.getPlayerIdOpponent());
+                , gameState.getMovingPlayerId()
+                , gameState.getOpponentPlayerId());
 
     }
 
@@ -73,8 +73,8 @@ public class GamePlayFacade implements GamePlay {
 
         return new ActiveGameStateResponse(updatedGameState.getGameId()
                 , new ArrayList<>(gameState.getAllPits().values())
-                , updatedGameState.getPlayerIdTurn()
-                , updatedGameState.getPlayerIdOpponent());
+                , updatedGameState.getMovingPlayerId()
+                , updatedGameState.getOpponentPlayerId());
 
     }
 

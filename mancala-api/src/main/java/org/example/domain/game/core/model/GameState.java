@@ -91,14 +91,14 @@ public class GameState implements Serializable {
 
     }
 
-    public String getPlayerIdTurn() {
+    public String getMovingPlayerId() {
         return this
                 .getPlayerStates().stream()
                 .filter(PlayerState::isMyTurn).findFirst()
                 .map(PlayerState::getPlayerId).orElseThrow(() -> new GameIllegalStateException("There has to be one player with valid turn"));
     }
 
-    public String getPlayerIdOpponent() {
+    public String getOpponentPlayerId() {
         return this
                 .getPlayerStates().stream()
                 .filter(playerState -> !playerState.isMyTurn()).findFirst()
