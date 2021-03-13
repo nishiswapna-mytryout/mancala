@@ -29,7 +29,6 @@ public class GameRichlet extends GenericRichlet {
     public void service(final Page page) throws Exception {
 
         Window gamewindow = loadinitwindow(page);
-
         gamewindow.setPosition("center");
 
         Button bigpit_B = createPit(playerB+largePit);
@@ -42,10 +41,7 @@ public class GameRichlet extends GenericRichlet {
         }
 
         gamewindow.appendChild(new Separator());
-
-        for(int i=0; i<17; i++) {
-            gamewindow.appendChild(new Space());
-        }
+        spacealign(gamewindow,17);
 
         for(int i=1; i<7; i++){
             Button smallpitA = createPit(playerA+i);
@@ -142,6 +138,14 @@ public class GameRichlet extends GenericRichlet {
         window.appendChild(button);
 
         return gamewindow;
+
+    }
+
+    private void spacealign(final Window window, final int count){
+
+        for(int i=0; i<count; i++) {
+            window.appendChild(new Space());
+        }
 
     }
 
