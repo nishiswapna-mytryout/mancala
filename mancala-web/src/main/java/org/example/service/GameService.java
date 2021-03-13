@@ -23,11 +23,11 @@ public class GameService {
     }
 
     public String getPlayerA() {
-        return PlayerA;
+        return playerA_name;
     }
 
     public String getPlayerB() {
-        return PlayerB;
+        return playerB_name;
     }
 
     public String getPitcount(String pitIndex) {

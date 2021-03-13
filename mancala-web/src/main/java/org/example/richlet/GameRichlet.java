@@ -9,7 +9,6 @@ import org.example.service.GameService;
 import org.zkoss.zk.ui.util.Clients;
 import org.zkoss.zul.*;
 
-import java.util.StringTokenizer;
 
 public class GameRichlet extends GenericRichlet {
 
@@ -29,61 +28,9 @@ public class GameRichlet extends GenericRichlet {
     @Override
     public void service(Page page) throws Exception {
 
-        Image img = new Image("~./img/mancala.png");
-        img.setHeight("40px");
-        img.setPage(page);
+        Window gamewindow = loadinitwindow(page);
 
-        Window window = new Window("Let's Play!", "normal", false);
-        window.setPage(page);
-        window.addSclass("~./css/web-globalstyles.css");
-
-        Label lbl_tag = new Label("It's a 2 player game.");
-        window.appendChild(new Separator());
-        window.appendChild(lbl_tag);
-        window.appendChild(new Separator());
-
-        Label lbl_player1 = new Label("Enter name for player 1:");
-        window.appendChild(new Separator());
-        window.appendChild(lbl_player1);
-        Textbox player1 = new Textbox();
-        player1.addEventListener("onChange", event ->
-            gameservice.setPlayer(playerA, player1.getValue())
-        );
-        window.appendChild(player1);
-
-        Label lbl_player2 = new Label("Enter name for player 2:");
-        window.appendChild(new Separator());
-        window.appendChild(lbl_player2);
-        Textbox player2 = new Textbox();
-        player2.addEventListener("onChange", event ->
-            gameservice.setPlayer(playerB, player2.getValue())
-        );
-        window.appendChild(player2);
-
-        Window gamewindow = new Window("", "normal", false);
-      //  gamewindow.setWidth("50%");
         gamewindow.setPosition("center");
-
-        Button button = new Button("Start Game");
-        button.addEventListener("onClick", event -> {
-            if(player1.getValue().isEmpty()){
-                Clients.showNotification("Enter name for Player 1");
-            } else if(player2.getValue().isEmpty()){
-                Clients.showNotification("Enter name for Player 2");
-            }
-            else{
-                Label label1 = new Label("Player 1: " + gameservice.getPlayerA());
-                Label label2 = new Label("Player 2: " + gameservice.getPlayerB());
-                gamewindow.setPage(page);
-                window.getChildren().clear();
-                window.appendChild(label1);
-                window.appendChild(new Space());
-                window.appendChild(label2);
-            }
-        });
-
-        window.appendChild(new Separator());
-        window.appendChild(button);
 
         Button bigpit_B = createBigPit(playerB+largePit);
         gamewindow.appendChild(bigpit_B);
@@ -141,6 +88,66 @@ public class GameRichlet extends GenericRichlet {
         );
 
         return bigpit;
+    }
+
+    private Window loadinitwindow(Page page){
+
+        Image img = new Image("~./img/mancala.png");
+        img.setHeight("40px");
+        img.setPage(page);
+
+        Window window = new Window("Let's Play!", "normal", false);
+        window.setPage(page);
+        window.addSclass("~./css/web-globalstyles.css");
+
+        Label lbl_tag = new Label("It's a 2 player game.");
+        window.appendChild(new Separator());
+        window.appendChild(lbl_tag);
+        window.appendChild(new Separator());
+
+        Label lbl_player1 = new Label("Enter name for player 1:");
+        window.appendChild(new Separator());
+        window.appendChild(lbl_player1);
+        Textbox player1 = new Textbox();
+        player1.addEventListener("onChange", event ->
+                gameservice.setPlayer(playerA, player1.getValue())
+        );
+        window.appendChild(player1);
+
+        Label lbl_player2 = new Label("Enter name for player 2:");
+        window.appendChild(new Separator());
+        window.appendChild(lbl_player2);
+        Textbox player2 = new Textbox();
+        player2.addEventListener("onChange", event ->
+                gameservice.setPlayer(playerB, player2.getValue())
+        );
+        window.appendChild(player2);
+
+        Window gamewindow = new Window("", "normal", false);
+
+        Button button = new Button("Start Game");
+        button.addEventListener("onClick", event -> {
+            if(player1.getValue().isEmpty()){
+                Clients.showNotification("Enter name for Player 1");
+            } else if(player2.getValue().isEmpty()){
+                Clients.showNotification("Enter name for Player 2");
+            }
+            else{
+                Label label1 = new Label("Player 1: " + gameservice.getPlayerA());
+                Label label2 = new Label("Player 2: " + gameservice.getPlayerB());
+                gamewindow.setPage(page);
+                window.getChildren().clear();
+                window.appendChild(label1);
+                window.appendChild(new Space());
+                window.appendChild(label2);
+            }
+        });
+
+        window.appendChild(new Separator());
+        window.appendChild(button);
+
+        return gamewindow;
+
     }
 
 
