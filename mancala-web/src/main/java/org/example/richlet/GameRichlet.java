@@ -96,7 +96,7 @@ public class GameRichlet extends GenericRichlet {
 
         gamewindow.appendChild(new Separator());
 
-        for(int i=0; i<18; i++) {
+        for(int i=0; i<17; i++) {
             gamewindow.appendChild(new Space());
         }
 
@@ -123,6 +123,7 @@ public class GameRichlet extends GenericRichlet {
             if(Integer.parseInt(gameservice.getPitcount(smallpit.getId()))==0) {
                 Clients.showNotification("Pit has no stones to pick. Choose another pit");
             }
+            Clients.showNotification("Picked "+gameservice.getPitcount(smallpit.getId())+" stones for sow");
             gameservice.sow(smallpit.getId());
         });
 
