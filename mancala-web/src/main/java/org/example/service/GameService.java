@@ -1,28 +1,25 @@
 package org.example.service;
 
 import org.springframework.stereotype.Service;
-import java.util.Date;
 
 @Service
 public class GameService {
 
-    private static String PlayerA;
+    private static final int defaultpitCount = 6;
+    private static final String PlayerA = "A";
+    private static final String PlayerB = "B";
+    private static String playerA_name;
+    private static String playerB_name;
 
-    private static String PlayerB;
-
-    private static int defaultpitCount = 6;
-
-    public Date getTime() {
-        return new Date();
-    }
 
     public void setPlayer(String id, String name) {
-        if("A".equalsIgnoreCase(id)){
-            PlayerA = name;
+        if(PlayerA.equalsIgnoreCase(id)){
+            playerA_name = name;
         }
-        else if("B".equalsIgnoreCase(id)){
-            PlayerB = name;
+        else if(PlayerB.equalsIgnoreCase(id)){
+            playerB_name = name;
         }
+        else throw new IllegalArgumentException("Invalid Player");
     }
 
     public String getPlayerA() {

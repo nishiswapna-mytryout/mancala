@@ -143,8 +143,6 @@ public class GameRichlet extends GenericRichlet {
         return bigpit;
     }
 
-    private void updatePitcount(){}
-
 
 
 }
