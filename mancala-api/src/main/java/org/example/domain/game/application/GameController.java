@@ -9,10 +9,7 @@ import org.example.domain.game.core.model.output.GameStateResponse;
 import org.example.domain.game.core.ports.incoming.GamePlay;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 
@@ -25,6 +22,13 @@ public class GameController {
     @GetMapping(path = "game", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ActiveGameStateResponse> startGame(@RequestParam("playerIdA") final String playerIdA, @RequestParam("playerIdB") final String playerIdB) {
         ActiveGameStateResponse activeGameStateResponse = gamePlay.initialize(new NewGameCommand(playerIdA, playerIdB));
+        return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
+                ResponseEntity.badRequest().build();
+    }
+
+    @PostMapping(path = "game", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ActiveGameStateResponse> initializeNewGame(@RequestBody final NewGameCommand newGameCommand) {
+        ActiveGameStateResponse activeGameStateResponse = gamePlay.initialize(newGameCommand);
         return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
                 ResponseEntity.badRequest().build();
     }
