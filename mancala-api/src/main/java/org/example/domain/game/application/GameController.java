@@ -11,6 +11,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RestController
 
 @AllArgsConstructor
@@ -20,7 +22,7 @@ public class GameController {
 
 
     @PostMapping(path = "game", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ActiveGameStateResponse> initializeGame(@RequestBody final NewGameCommand newGameCommand) {
+    public ResponseEntity<ActiveGameStateResponse> initializeGame(@Valid @RequestBody final NewGameCommand newGameCommand) {
         ActiveGameStateResponse activeGameStateResponse = gamePlay.initialize(newGameCommand);
         return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
                 ResponseEntity.badRequest().build();
