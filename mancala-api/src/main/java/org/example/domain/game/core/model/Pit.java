@@ -1,14 +1,13 @@
-package org.example.domain;
+package org.example.domain.game.core.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.example.domain.interfaces.PitBehavior;
 
 @AllArgsConstructor
 @Getter
 @Setter
-public abstract class Pit {
+@ToString
+public abstract class Pit implements PitBehavior {
 
     private final String pitPosition;
     @Setter(AccessLevel.PROTECTED)

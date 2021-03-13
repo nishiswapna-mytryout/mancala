@@ -1,8 +1,6 @@
 package org.example.datastructures;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.example.domain.Pit;
+import java.util.function.Supplier;
 
 public class CircularLinkedList<T> {
     private Node<T> head = null;
@@ -51,5 +49,13 @@ public class CircularLinkedList<T> {
             } while (currentNode != head);
             return null;
         }
+    }
+
+    public Node<T> getNodeElseThrow(T searchValue, Supplier<? extends RuntimeException> exceptionSupplier){
+        Node<T> node = getNode(searchValue);
+        if(node==null){
+            throw exceptionSupplier.get();
+        }
+        return node;
     }
 }
