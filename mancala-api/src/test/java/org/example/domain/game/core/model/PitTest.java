@@ -1,6 +1,5 @@
-package org.example.domain;
+package org.example.domain.game.core.model;
 
-import org.example.domain.game.core.model.SmallPit;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
