@@ -16,18 +16,11 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 public class GameController {
 
-
     private final GamePlay gamePlay;
 
-    @GetMapping(path = "game", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ActiveGameStateResponse> startGame(@RequestParam("playerIdA") final String playerIdA, @RequestParam("playerIdB") final String playerIdB) {
-        ActiveGameStateResponse activeGameStateResponse = gamePlay.initialize(new NewGameCommand(playerIdA, playerIdB));
-        return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
-                ResponseEntity.badRequest().build();
-    }
 
     @PostMapping(path = "game", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ActiveGameStateResponse> initializeNewGame(@RequestBody final NewGameCommand newGameCommand) {
+    public ResponseEntity<ActiveGameStateResponse> initializeGame(@RequestBody final NewGameCommand newGameCommand) {
         ActiveGameStateResponse activeGameStateResponse = gamePlay.initialize(newGameCommand);
         return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
                 ResponseEntity.badRequest().build();
