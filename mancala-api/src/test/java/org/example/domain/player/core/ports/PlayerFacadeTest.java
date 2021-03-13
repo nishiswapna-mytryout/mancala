@@ -2,11 +2,15 @@ package org.example.domain.player.core.ports;
 
 import org.example.domain.player.core.model.Player;
 import org.example.domain.player.core.model.command.AddPlayerCommand;
+import org.example.domain.player.core.model.command.GetPlayerCommand;
 import org.example.domain.player.core.model.output.PlayerIdentifier;
+import org.example.domain.player.core.model.output.PlayerResponse;
 import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockitoAnnotations;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -41,7 +45,19 @@ public class PlayerFacadeTest {
     public void givenInvalidAddPlayerCommandGivesError(){
         final AddPlayerCommand addPlayerCommand = new AddPlayerCommand();
         assertThrows(IllegalArgumentException.class, ()->playerFacade.add(addPlayerCommand));
+    }
 
+    @Test
+    public void givenValidGetPlayerCommanduccessfullyGetsPlayer(){
+        final String firstName = "FirstName";
+        final String lastName = "LastName";
+        final GetPlayerCommand getPlayerCommand = mock(GetPlayerCommand.class);
+        when(getPlayerCommand.getPlayerId()).thenReturn("Something");
+        when(playerDatabase
+                .getExistingPlayer(any(String.class)))
+                .thenReturn(Optional.of(new PlayerResponse(firstName,lastName)));
+        assertEquals(playerFacade.get(getPlayerCommand).getFirstName(),firstName);
+        assertEquals(playerFacade.get(getPlayerCommand).getLastName(),lastName);
     }
 
 }
