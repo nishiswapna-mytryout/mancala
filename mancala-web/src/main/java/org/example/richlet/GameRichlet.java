@@ -26,13 +26,13 @@ public class GameRichlet extends GenericRichlet {
     }
 
     @Override
-    public void service(Page page) throws Exception {
+    public void service(final Page page) throws Exception {
 
         Window gamewindow = loadinitwindow(page);
 
         gamewindow.setPosition("center");
 
-        Button bigpit_B = createBigPit(playerB+largePit);
+        Button bigpit_B = createPit(playerB+largePit);
         gamewindow.appendChild(bigpit_B);
 
         for(int j=6; j>0; j--){
@@ -53,44 +53,39 @@ public class GameRichlet extends GenericRichlet {
             gamewindow.appendChild(new Space());
         }
 
-        Button bigpit_A = createBigPit(playerA+largePit);
+        Button bigpit_A = createPit(playerA+largePit);
         gamewindow.appendChild(bigpit_A);
 
     }
 
-    private Button createPit(String pitIndex){
+    private Button createPit(final String pitIndex){
 
-        Button smallpit = new Button();
-        smallpit.setId(pitIndex);
-        smallpit.setImage("~./img/smallpit.png");
-        smallpit.setLabel(gameservice.getPitcount(smallpit.getId()));
-        smallpit.setOrient("vertical");
-        smallpit.setAutodisable("self");
-        smallpit.addEventListener("onClick", event -> {
-            if(Integer.parseInt(gameservice.getPitcount(smallpit.getId()))==0) {
-                Clients.showNotification("Pit has no stones to pick. Choose another pit");
-            }
-            Clients.showNotification("Picked "+gameservice.getPitcount(smallpit.getId())+" stones for sow");
-            gameservice.sow(smallpit.getId());
-        });
+        Button pit = new Button();
+        pit.setId(pitIndex);
+        pit.setLabel(gameservice.getPitcount(pit.getId()));
+        pit.setOrient("vertical");
+        pit.setAutodisable("self");
 
-        return smallpit;
+        if(pitIndex.endsWith(largePit)){
+            pit.setImage("~./img/bigpit.png");
+            pit.addEventListener("onClick", event ->
+                    Clients.showNotification("Players cannot pick from a Big Pit")
+            );
+        }else {
+            pit.setImage("~./img/smallpit.png");
+            pit.addEventListener("onClick", event -> {
+                if (Integer.parseInt(gameservice.getPitcount(pit.getId())) == 0) {
+                    Clients.showNotification("Pit has no stones to pick. Choose another pit");
+                }
+                Clients.showNotification("Picked " + gameservice.getPitcount(pit.getId()) + " stones for sow");
+                gameservice.sow(pit.getId());
+            });
+        }
+
+        return pit;
     }
 
-    private Button createBigPit(String pitIndex){
-        Button bigpit = new Button();
-        bigpit.setId(pitIndex);
-        bigpit.setImage("~./img/bigpit.png");
-        bigpit.setOrient("vertical");
-        bigpit.setLabel(gameservice.getPitcount(String.valueOf(bigpit.getId())));
-        bigpit.addEventListener("onClick", event ->
-            Clients.showNotification("Players cannot pick from a Big Pit")
-        );
-
-        return bigpit;
-    }
-
-    private Window loadinitwindow(Page page){
+    private Window loadinitwindow(final Page page){
 
         Image img = new Image("~./img/mancala.png");
         img.setHeight("40px");
