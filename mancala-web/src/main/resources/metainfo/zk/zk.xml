@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<zk>
+    <config-name>zkspringboot-test</config-name>
+
+    <!--enable websocket support in ZK 8.5.1 (ZK-3799)  -->
+    <listener>
+        <listener-class>org.zkoss.zkmax.au.websocket.WebSocketWebAppInit</listener-class>
+    </listener>
+
+    <richlet>
+        <richlet-name>GameRichlet</richlet-name><!-- your preferred name -->
+        <richlet-class>org.example.richlet.GameRichlet</richlet-class><!-- your class name, of course -->
+    </richlet>
+    <richlet-mapping>
+        <richlet-name>GameRichlet</richlet-name>
+        <url-pattern>/richlet/mancala</url-pattern>
+    </richlet-mapping>
+</zk>
