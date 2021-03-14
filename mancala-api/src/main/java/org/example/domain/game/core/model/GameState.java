@@ -127,8 +127,8 @@ public class GameState implements Serializable {
             } else {
                 this.switchPlayerTurn(movingPlayerId);
             }
-        }else if(lastPit instanceof SmallPit
-                && ! gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide)){
+        } else if (lastPit instanceof SmallPit
+                && !gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide)) {
             this.switchPlayerTurn(movingPlayerId);
         }
 
@@ -159,6 +159,13 @@ public class GameState implements Serializable {
     private void switchPlayerTurn(@NonNull final String playingPlayerId) {
         this.playerStates.forEach(playerState ->
                 playerState.setMyTurn(!playingPlayerId.equals(playerState.getPlayerId())));
+    }
+
+    public GameState isGameActive(final Supplier<? extends RuntimeException> exceptionSupplier) {
+        if (this.isFinished) {
+            throw exceptionSupplier.get();
+        }
+        return this;
     }
 
 
