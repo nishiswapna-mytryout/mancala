@@ -47,6 +47,12 @@ public class PlayerFacadeTest {
         playerFacade.add(addPlayerCommand);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void givenInvalidAddPlayerCommandWithEmptyStringGivesError() {
+        final AddPlayerCommand addPlayerCommand = new AddPlayerCommand("","");
+        playerFacade.add(addPlayerCommand);
+    }
+
     @Test
     public void givenValidGetPlayerCommandSuccessfullyGetsPlayer() {
         final String firstName = "FirstName";
