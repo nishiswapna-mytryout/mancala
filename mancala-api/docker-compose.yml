@@ -1,5 +1,20 @@
 version: '3.3'
 services:
+  mancala-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8099:8099"
+    environment:
+      - SPRING_DATA_MONGODB_HOST=mongodb
+      - SPRING_DATA_MONGODB_PORT=27017
+      - SPRING_REDIS_HOST=redisdb
+      - SPRING_REDIS_PORT=6379
+    depends_on:
+      - mongodb
+      - redisdb
   mongodb:
     image: mongo:latest
     container_name: "mancala_mongodb"

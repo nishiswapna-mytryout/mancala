@@ -22,13 +22,13 @@ public class PlayerController {
     @GetMapping("player/{id}")
     public ResponseEntity<PlayerResponse> getPlayer(@PathVariable("id") final String playerId) {
 
-        PlayerResponse playerResponse = getPlayer.handleCommand(new GetPlayerCommand(playerId));
+        PlayerResponse playerResponse = getPlayer.get(new GetPlayerCommand(playerId));
         return playerResponse != null ? ResponseEntity.ok(playerResponse) : ResponseEntity.notFound().build();
     }
 
     @PostMapping("player")
     public ResponseEntity<String> addPlayer(@RequestBody final AddPlayerCommand addPlayerCommand) {
-        PlayerIdentifier playerIdentifier = addNewPlayer.handleCommand(addPlayerCommand);
+        PlayerIdentifier playerIdentifier = addNewPlayer.add(addPlayerCommand);
 
         return playerIdentifier != null ?
                 ResponseEntity
