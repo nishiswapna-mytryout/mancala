@@ -146,10 +146,15 @@ function sow() {
 			document.getElementById("player_turn").innerHTML = "sow api error";
 		}
 	};
-	var url = base_url + sow_url + gameid + "/pits/" + number_pit_mapping[pit_location] + "/player/" + player_turn;
+	var url = base_url + sow_url + gameid;
+
+	var data = {};
+	data.pickPosition=number_pit_mapping[pit_location];
+	data.movingPlayerId=player_turn
+	var json = JSON.stringify(data);
 	console.log(url);
-	xhttp.open("GET", url, true);
-	xhttp.send();
+	xhttp.open("PATCH", url, true);
+	xhttp.send(json);
 }
 
 
