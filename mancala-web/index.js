@@ -140,7 +140,7 @@ function sow() {
 	var pit_location = event.target.id.substring(5);
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
-		if (this.readyState == 4 && this.status == 200) {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_active_game_response(this.responseText, false);
 		} else {
 			document.getElementById("player_turn").innerHTML = "sow api error";
@@ -154,6 +154,7 @@ function sow() {
 	var json = JSON.stringify(data);
 	console.log(url);
 	xhttp.open("PATCH", url, true);
+	xhttp.setRequestHeader("Content-Type", "application/json");
 	xhttp.send(json);
 }
 
