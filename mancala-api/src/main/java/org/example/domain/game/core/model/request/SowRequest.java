@@ -1,12 +1,11 @@
-package org.example.domain.game.core.model.command;
+package org.example.domain.game.core.model.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class SowCommand {
-    private final String gameId;
+public class SowRequest {
     private final String pickPosition;
     private final String movingPlayerId;
 }

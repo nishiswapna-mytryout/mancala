@@ -53,19 +53,19 @@ public class GamePlayFacade implements GamePlay {
     @Override
     public ActiveGameStateResponse sow(final SowCommand sowCommand) {
 
-        playerDatabase.getExistingPlayer(sowCommand.getMovingPlayer())
-                .orElseThrow(() -> new PlayerNotFoundException(String.format("Player id %s unknown for the active game", sowCommand.getMovingPlayer())));
+        playerDatabase.getExistingPlayer(sowCommand.getMovingPlayerId())
+                .orElseThrow(() -> new PlayerNotFoundException(String.format("Player id %s unknown for the active game", sowCommand.getMovingPlayerId())));
 
         final GameState gameState = gamePlayDatabase.load(sowCommand.getGameId())
                 .orElseThrow(() -> new GameNotFoundException(String.format("Unknown active game %s", sowCommand.getGameId())));
 
-        gameState.isPlayerMoveAllowed(sowCommand.getMovingPlayer(),
-                () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayer())));
+        gameState.isPlayerMoveAllowed(sowCommand.getMovingPlayerId(),
+                () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())));
 
-        gameState.isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayer(),
+        gameState.isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayerId(),
                 () -> new GameIllegalMoveException(String.format("Player cannot pick from this position %s", sowCommand.getPickPosition())));
 
-        final GameState newGameState = gameState.sow(sowCommand.getMovingPlayer(), sowCommand.getPickPosition(), gameBoardFeatures);
+        final GameState newGameState = gameState.sow(sowCommand.getMovingPlayerId(), sowCommand.getPickPosition(), gameBoardFeatures);
 
         log.warn(gameState.toString());
 
