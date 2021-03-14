@@ -38,12 +38,10 @@ public class GameState implements Serializable {
 
     private static GameState gameState;
 
-    public static GameState initialize(final String playerIdA, final String playerIdB, final GameBoardFeatures gameBoardFeatures) {
+    public static GameState initialize(final String playerIdA, final String playerIdB, final int gameStoneCount) {
 
         PlayerState playerStateA = new PlayerState(playerIdA, true, PlayerSide.SideA);
         PlayerState playerStateB = new PlayerState(playerIdB, false, PlayerSide.SideB);
-
-        int gameStoneCount = gameBoardFeatures.getStoneCountPerPit();
 
         HashMap<String, Pit> pitSetUp = new HashMap<String, Pit>() {{
 
