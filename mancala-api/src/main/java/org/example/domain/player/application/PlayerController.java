@@ -27,14 +27,14 @@ public class PlayerController {
     }
 
     @PostMapping("player")
-    public ResponseEntity<String> addPlayer(@RequestBody final AddPlayerCommand addPlayerCommand) {
+    public ResponseEntity<PlayerIdentifier> addPlayer(@RequestBody final AddPlayerCommand addPlayerCommand) {
         PlayerIdentifier playerIdentifier = addNewPlayer.add(addPlayerCommand);
 
         return playerIdentifier != null ?
                 ResponseEntity
                         .status(HttpStatus.CREATED)
-                        .body(playerIdentifier.getPlayerId()) :
-                ResponseEntity.badRequest().body("someting went wrong");
+                        .body(playerIdentifier) :
+                ResponseEntity.badRequest().build();
 
     }
 
