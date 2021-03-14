@@ -17,20 +17,23 @@ var token_player_mapping = {};
 
 function start_game() {
 	console.log("start game");
-	player_id_1 = document.getElementById("player_id_1").value;
-	player_id_2 = document.getElementById("player_id_2").value;
+	player_id_1_first = document.getElementById("player_id_1_first").value;
+	player_id_2_first = document.getElementById("player_id_2_first").value;
 
-	create_player(player_id_1);
-	create_player(player_id_2);
+	player_id_1_last = document.getElementById("player_id_1_last").value;
+	player_id_2_last = document.getElementById("player_id_2_last").value;
+
+	create_player(player_id_1_first,player_id_1_last);
+	create_player(player_id_2_first,player_id_2_last);
 
 	call_start_api(player_id_1, player_id_2);
 }
 
-function create_player(player_name) {
+function create_player(player_first_name, player_last_name) {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
 		if (this.readyState === XMLHttpRequest.DONE && this.status == 201) {
-			token_player_mapping[this.responseText] = player_name;
+			token_player_mapping[JSON.parse(this.responseText).playerId]=player_first_name;
 		} else {
 			document.getElementById("player_turn").innerHTML = "unable to create player";
 		}
@@ -38,8 +41,8 @@ function create_player(player_name) {
 	var url = base_url + player_url;
 	console.log(url);
 	var data = {};
-	data.firstName = player_name;
-	data.lastName = "";
+	data.firstName = player_first_name;
+	data.lastName = player_last_name;
 	var json = JSON.stringify(data);
 	xhttp.open("POST", url, false);
 	xhttp.setRequestHeader("Content-Type", "application/json");
