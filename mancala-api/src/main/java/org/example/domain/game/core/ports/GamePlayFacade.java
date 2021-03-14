@@ -39,14 +39,11 @@ public class GamePlayFacade implements GamePlay {
                 .orElseThrow(() -> new PlayerNotFoundException(String.format("Player id %s unknown ", newGameCommand.getPlayerIdB())));
 
 
-        final GameState gameState = gamePlayDatabase.save(GameState.initialize(newGameCommand.getPlayerIdA(), newGameCommand.getPlayerIdB(), gameBoardFeatures));
+        final GameState gameState = gamePlayDatabase.save(GameState.initialize(newGameCommand.getPlayerIdA()
+                , newGameCommand.getPlayerIdB()
+                , gameBoardFeatures.getStoneCountPerPit()));
 
-        log.warn(gameState.toString());
-
-        return new ActiveGameStateResponse(gameState.getGameId()
-                , new ArrayList<>(gameState.getAllPits().values())
-                , gameState.getMovingPlayerId()
-                , gameState.getOpponentPlayerId());
+        return ActiveGameStateResponse.from(gameState);
 
     }
 
@@ -59,22 +56,18 @@ public class GamePlayFacade implements GamePlay {
         final GameState gameState = gamePlayDatabase.load(sowCommand.getGameId())
                 .orElseThrow(() -> new GameNotFoundException(String.format("Unknown active game %s", sowCommand.getGameId())));
 
-        gameState.isPlayerMoveAllowed(sowCommand.getMovingPlayerId(),
-                () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())));
-
-        gameState.isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayerId(),
+        gameState
+                .isGameActive(() -> new GameIllegalMoveException("Game is not active"))
+                .isPlayerMoveAllowed(sowCommand.getMovingPlayerId(),
+                () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())))
+                .isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayerId(),
                 () -> new GameIllegalMoveException(String.format("Player cannot pick from this position %s", sowCommand.getPickPosition())));
 
         final GameState newGameState = gameState.sow(sowCommand.getMovingPlayerId(), sowCommand.getPickPosition(), gameBoardFeatures);
 
-        log.warn(gameState.toString());
-
         final GameState updatedGameState = gamePlayDatabase.update(newGameState);
 
-        return new ActiveGameStateResponse(updatedGameState.getGameId()
-                , new ArrayList<>(gameState.getAllPits().values())
-                , updatedGameState.getMovingPlayerId()
-                , updatedGameState.getOpponentPlayerId());
+        return ActiveGameStateResponse.from(updatedGameState);
 
     }
 
@@ -87,15 +80,7 @@ public class GamePlayFacade implements GamePlay {
 
         final GameState updatedGameState = gamePlayDatabase.update(newGameState);
 
-        final List<PlayerScore> playerScores = updatedGameState.getPlayerStates()
-                .stream()
-                .map(playerState -> new PlayerScore(playerState.getPlayerId(),
-                        updatedGameState.getBigPit(playerState.getPlayerSide()).getCurrentStoneCount()))
-                .collect(Collectors.toList());
-        return new GameStateResponse(updatedGameState.getGameId()
-                , new ArrayList<>(gameState.getAllPits().values())
-                , updatedGameState.isFinished()
-                , playerScores);
+        return GameStateResponse.from(updatedGameState);
 
     }
 

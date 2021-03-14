@@ -38,12 +38,10 @@ public class GameState implements Serializable {
 
     private static GameState gameState;
 
-    public static GameState initialize(final String playerIdA, final String playerIdB, final GameBoardFeatures gameBoardFeatures) {
+    public static GameState initialize(final String playerIdA, final String playerIdB, final int gameStoneCount) {
 
         PlayerState playerStateA = new PlayerState(playerIdA, true, PlayerSide.SideA);
         PlayerState playerStateB = new PlayerState(playerIdB, false, PlayerSide.SideB);
-
-        int gameStoneCount = gameBoardFeatures.getStoneCountPerPit();
 
         HashMap<String, Pit> pitSetUp = new HashMap<String, Pit>() {{
 
@@ -127,6 +125,9 @@ public class GameState implements Serializable {
             } else {
                 this.switchPlayerTurn(movingPlayerId);
             }
+        } else if (lastPit instanceof SmallPit
+                && !gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide)) {
+            this.switchPlayerTurn(movingPlayerId);
         }
 
         return this;
@@ -158,24 +159,33 @@ public class GameState implements Serializable {
                 playerState.setMyTurn(!playingPlayerId.equals(playerState.getPlayerId())));
     }
 
+    public GameState isGameActive(final Supplier<? extends RuntimeException> exceptionSupplier) {
+        if (this.isFinished) {
+            throw exceptionSupplier.get();
+        }
+        return this;
+    }
 
-    public void isPlayerMoveAllowed(final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
+
+    public GameState isPlayerMoveAllowed(final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
         this.playerStates.stream()
                 .filter(playerState -> isMovingPlayer(playingPlayer, playerState) && playerState.isMyTurn())
                 .findFirst()
                 .orElseThrow(exceptionSupplier);
+        return this;
     }
 
     private boolean isMovingPlayer(String movingPlayer, PlayerState playerState) {
         return playerState.getPlayerId().equals(movingPlayer);
     }
 
-    public void isPickPositionValid(final String pickPosition, final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
+    public GameState isPickPositionValid(final String pickPosition, final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
         this.playerStates.stream()
                 .filter(playerState -> isMovingPlayer(playingPlayer, playerState)
                         && pickPositionIsFromPlayingSide(pickPosition, playerState)
                         && pitPositionIsASmallPit(pickPosition))
                 .findFirst().orElseThrow(exceptionSupplier);
+        return this;
 
     }
 

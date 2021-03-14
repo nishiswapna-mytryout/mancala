@@ -19,6 +19,7 @@ public class PlayerFacade implements AddNewPlayer, GetPlayer {
     @Override
     public PlayerIdentifier add(AddPlayerCommand addPlayerCommand) {
         final Player player = new Player(addPlayerCommand.getFirstName(), addPlayerCommand.getLastName());
+        player.validatePlayer(()->new IllegalArgumentException("Player contains invalid data, cannot be saved"));
         return playerDatabase.save(player);
     }
 
