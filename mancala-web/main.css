@@ -1,0 +1,36 @@
+#title {
+  font-size: 2em;
+  font-family: sans-serif;
+  font-weight: bold;
+}
+
+p.box {
+  height: 8vh;
+  padding-top: 5vh;
+  text-align: center;
+  margin: 1vh;
+  font-size: 120%;
+}
+
+p.player_one {
+  background-color:rgb(255, 222, 222);
+}
+
+p.player_two {
+  background-color:rgb(222, 222, 255);
+}
+
+p.player_turn {
+  outline: none;
+  height: 6vh;
+  font-size: 120%;
+  font-weight: bold;
+}
+
+p.hide {
+  visibility: hidden;
+}
+
+.center {
+  text-align: center;
+}
