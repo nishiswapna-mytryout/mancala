@@ -60,9 +60,8 @@ public class GamePlayFacade implements GamePlay {
                 .orElseThrow(() -> new GameNotFoundException(String.format("Unknown active game %s", sowCommand.getGameId())));
 
         gameState.isPlayerMoveAllowed(sowCommand.getMovingPlayerId(),
-                () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())));
-
-        gameState.isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayerId(),
+                () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())))
+                .isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayerId(),
                 () -> new GameIllegalMoveException(String.format("Player cannot pick from this position %s", sowCommand.getPickPosition())));
 
         final GameState newGameState = gameState.sow(sowCommand.getMovingPlayerId(), sowCommand.getPickPosition(), gameBoardFeatures);

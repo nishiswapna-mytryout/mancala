@@ -127,6 +127,9 @@ public class GameState implements Serializable {
             } else {
                 this.switchPlayerTurn(movingPlayerId);
             }
+        }else if(lastPit instanceof SmallPit
+                && ! gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide)){
+            this.switchPlayerTurn(movingPlayerId);
         }
 
         return this;
@@ -159,23 +162,25 @@ public class GameState implements Serializable {
     }
 
 
-    public void isPlayerMoveAllowed(final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
+    public GameState isPlayerMoveAllowed(final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
         this.playerStates.stream()
                 .filter(playerState -> isMovingPlayer(playingPlayer, playerState) && playerState.isMyTurn())
                 .findFirst()
                 .orElseThrow(exceptionSupplier);
+        return this;
     }
 
     private boolean isMovingPlayer(String movingPlayer, PlayerState playerState) {
         return playerState.getPlayerId().equals(movingPlayer);
     }
 
-    public void isPickPositionValid(final String pickPosition, final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
+    public GameState isPickPositionValid(final String pickPosition, final String playingPlayer, final Supplier<? extends RuntimeException> exceptionSupplier) {
         this.playerStates.stream()
                 .filter(playerState -> isMovingPlayer(playingPlayer, playerState)
                         && pickPositionIsFromPlayingSide(pickPosition, playerState)
                         && pitPositionIsASmallPit(pickPosition))
                 .findFirst().orElseThrow(exceptionSupplier);
+        return this;
 
     }
 
