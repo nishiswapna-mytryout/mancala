@@ -4,8 +4,10 @@ import org.example.domain.GameBoardFeatures;
 import org.example.domain.game.core.model.BigPit;
 import org.example.domain.game.core.model.GameState;
 import org.example.domain.game.core.model.SmallPit;
+import org.example.domain.game.core.model.command.GetGameStatusCommand;
 import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.output.ActiveGameStateResponse;
+import org.example.domain.game.core.model.output.GameStateResponse;
 import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
 import org.example.domain.player.core.model.exceptions.PlayerNotFoundException;
 import org.example.domain.player.core.model.output.PlayerResponse;
@@ -40,6 +42,20 @@ public class GamePlayFacadeTest {
 
     @InjectMocks
     private GamePlayFacade gamePlayFacade;
+
+    @Test
+    public void givenValidGameIdReturnStatus() {
+
+        when(gamePlayDatabase.load(any(String.class))).thenReturn(Optional.of(GameState.initialize("Play1", "Play2", 6)));
+        when(gamePlayDatabase.update(any(GameState.class))).thenReturn(GameState.initialize("Play1", "Play2", 6));
+
+
+        GetGameStatusCommand getGameStatusCommand = new GetGameStatusCommand("Play2");
+        GameStateResponse gameStateResponse = gamePlayFacade.getStatus(getGameStatusCommand);
+        assertNotNull(gameStateResponse);
+        assertTrue(gameStateResponse.getPitState().size()>0);
+
+    }
 
     @Test
     public void givenValidPlayersInitializeGame() {
