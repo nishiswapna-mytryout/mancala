@@ -49,7 +49,7 @@ public class PlayerControllerTest extends ControllerTest{
     }
 
     @Test
-    public void testPlayerCreation() throws Exception {
+    public void testPlayerCreationWhenErrorFromFacade() throws Exception {
 
         Mockito.when(this.addNewPlayer.add(any(AddPlayerCommand.class)))
                 .thenReturn(new PlayerIdentifier("SomeValue"));
