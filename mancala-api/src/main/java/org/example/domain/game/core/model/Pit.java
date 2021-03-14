@@ -1,7 +1,6 @@
 package org.example.domain.game.core.model;
 
 import lombok.*;
-import org.example.domain.interfaces.PitBehavior;
 
 @AllArgsConstructor
 @Getter

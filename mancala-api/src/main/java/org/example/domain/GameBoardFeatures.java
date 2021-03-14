@@ -12,8 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.example.domain.interfaces.PitBehavior.isBigPit;
-import static org.example.domain.interfaces.PitBehavior.validatePitPosition;
+import static org.example.domain.game.core.model.PitBehavior.isBigPit;
+import static org.example.domain.game.core.model.PitBehavior.validatePitPosition;
 
 
 public class GameBoardFeatures {
