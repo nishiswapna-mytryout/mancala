@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-
+@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.PATCH})
 @AllArgsConstructor
 public class GameController {
 

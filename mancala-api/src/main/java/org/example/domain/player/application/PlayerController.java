@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.POST})
 public class PlayerController {
 
-    private AddNewPlayer addNewPlayer;
-    private GetPlayer getPlayer;
+    private final AddNewPlayer addNewPlayer;
+    private final GetPlayer getPlayer;
 
 
     @GetMapping("player/{id}")
