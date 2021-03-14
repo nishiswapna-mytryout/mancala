@@ -8,5 +8,5 @@ import lombok.Getter;
 public class SowCommand {
     private final String gameId;
     private final String pickPosition;
-    private final String movingPlayer;
+    private final String movingPlayerId;
 }

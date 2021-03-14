@@ -1,17 +1,16 @@
 package org.example.domain.game.core.model;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 
 public class PitTest {
 
     private static SmallPit pit;
 
-    @BeforeAll
+    @BeforeClass
     public static void setUp() {
         pit = new SmallPit("A1", 6);
     }
@@ -22,9 +21,9 @@ public class PitTest {
         assertEquals(currentStoneCount, pit.sow(0));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testPutForNegativeValue() {
-        assertThrows(IllegalArgumentException.class, () -> pit.sow(-2), "Incoming stone count cannot be negative");
+        pit.sow(-2);
     }
 
     @Test
@@ -34,11 +33,12 @@ public class PitTest {
         assertEquals(currentStoneCount + increment, pit.sow(increment));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testPitIfAlreadyEmpty() {
         SmallPit newPit = new SmallPit("B2", 6);
         newPit.pick();
-        assertThrows(IllegalArgumentException.class, newPit::pick, "Pit is already empty, pick another pit");
+        newPit.pick();
+
     }
 
     @Test

@@ -6,6 +6,7 @@ import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
 import org.example.domain.game.core.model.output.ActiveGameStateResponse;
 import org.example.domain.game.core.model.output.GameStateResponse;
+import org.example.domain.game.core.model.request.SowRequest;
 import org.example.domain.game.core.ports.incoming.GamePlay;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin(methods = {RequestMethod.GET,RequestMethod.POST, RequestMethod.PATCH})
+@CrossOrigin(methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PATCH})
 @AllArgsConstructor
 public class GameController {
 
@@ -28,16 +29,16 @@ public class GameController {
                 ResponseEntity.badRequest().build();
     }
 
-    @GetMapping(path = "game/{id}/pits/{pitlocation}/player/{playerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ActiveGameStateResponse> sow(@PathVariable("id") final String gameId, @PathVariable("pitlocation") final String pitPosition, @PathVariable("playerId") final String movingPlayer) {
+    @PatchMapping(path = "game/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ActiveGameStateResponse> sow(@PathVariable("id") final String gameId, @RequestBody final SowRequest sowRequest) {
 
-        ActiveGameStateResponse activeGameStateResponse = gamePlay.sow(new SowCommand(gameId, pitPosition, movingPlayer));
+        ActiveGameStateResponse activeGameStateResponse = gamePlay.sow(new SowCommand(gameId, sowRequest.getPickPosition(), sowRequest.getMovingPlayerId()));
         return activeGameStateResponse != null ? ResponseEntity.ok().body(activeGameStateResponse) :
                 ResponseEntity.badRequest().build();
 
     }
 
-    @GetMapping("game/status/{id}")
+    @GetMapping("game/{id}/status")
     public ResponseEntity<GameStateResponse> gameStatus(@PathVariable("id") final String gameId) {
         GameStateResponse gameStateResponse = gamePlay.getStatus(new GetGameStatusCommand(gameId));
         return gameStateResponse != null ? ResponseEntity.ok().body(gameStateResponse) :

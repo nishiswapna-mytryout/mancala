@@ -1,4 +1,4 @@
-package org.example.domain.interfaces;
+package org.example.domain.game.core.model;
 
 import java.io.Serializable;
 
