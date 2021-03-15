@@ -2,6 +2,7 @@ package org.example.domain.game.core.model;
 
 import lombok.*;
 import org.example.domain.GameBoardFeatures;
+import org.example.domain.game.core.model.exceptions.GameIllegalMoveException;
 import org.example.domain.game.core.model.exceptions.GameIllegalStateException;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -105,6 +106,15 @@ public class GameState implements Serializable {
     }
 
     public GameState sow(@NonNull String movingPlayerId, @NonNull String pickPosition, @NonNull GameBoardFeatures gameBoardFeatures) {
+        return this.isGameActive(() -> new GameIllegalMoveException("Game is not active"))
+                .isPlayerMoveAllowed(movingPlayerId,
+                        () -> new GameIllegalMoveException(String.format("Player %s move not allowed", movingPlayerId)))
+                .isPickPositionValid(pickPosition, movingPlayerId,
+                        () -> new GameIllegalMoveException(String.format("Player cannot pick from this position %s", pickPosition)))
+                .sowRight(movingPlayerId, pickPosition, gameBoardFeatures);
+    }
+
+    private GameState sowRight(@NonNull String movingPlayerId, @NonNull String pickPosition, @NonNull GameBoardFeatures gameBoardFeatures) {
 
         final SmallPit smallPit = (SmallPit) this.getAllPits().get(pickPosition);
 

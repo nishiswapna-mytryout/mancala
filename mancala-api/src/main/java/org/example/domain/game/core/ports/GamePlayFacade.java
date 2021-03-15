@@ -7,7 +7,6 @@ import org.example.domain.game.core.model.GameState;
 import org.example.domain.game.core.model.command.GetGameStatusCommand;
 import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
-import org.example.domain.game.core.model.exceptions.GameIllegalMoveException;
 import org.example.domain.game.core.model.exceptions.GameNotFoundException;
 import org.example.domain.game.core.model.output.ActiveGameStateResponse;
 import org.example.domain.game.core.model.output.GameStateResponse;
@@ -50,13 +49,6 @@ public class GamePlayFacade implements GamePlay {
 
         final GameState gameState = gamePlayDatabase.load(sowCommand.getGameId())
                 .orElseThrow(() -> new GameNotFoundException(String.format("Unknown active game %s", sowCommand.getGameId())));
-
-        gameState
-                .isGameActive(() -> new GameIllegalMoveException("Game is not active"))
-                .isPlayerMoveAllowed(sowCommand.getMovingPlayerId(),
-                        () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())))
-                .isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayerId(),
-                        () -> new GameIllegalMoveException(String.format("Player cannot pick from this position %s", sowCommand.getPickPosition())));
 
         final GameState newGameState = gameState.sow(sowCommand.getMovingPlayerId(), sowCommand.getPickPosition(), gameBoardFeatures);
 
