@@ -66,7 +66,7 @@ public class GameState implements Serializable {
 
     }
 
-    public List<SmallPit> getSmallPits(PlayerSide playerSide) {
+    public List<SmallPit> getSmallPits(@NonNull final PlayerSide playerSide) {
 
         return this.allPits.values()
                 .stream()
@@ -104,7 +104,7 @@ public class GameState implements Serializable {
 
     }
 
-    public GameState sow(String movingPlayerId, String pickPosition, GameBoardFeatures gameBoardFeatures) {
+    public GameState sow(@NonNull String movingPlayerId, @NonNull String pickPosition, @NonNull GameBoardFeatures gameBoardFeatures) {
 
         final SmallPit smallPit = (SmallPit) this.getAllPits().get(pickPosition);
 
@@ -115,24 +115,33 @@ public class GameState implements Serializable {
 
         final String lastDroppedPosition = sowRightAllStonesFromPit(gameBoardFeatures, movingPlayerSide, smallPit);
 
-        Pit lastPit = this.getAllPits().get(lastDroppedPosition);
+        final Pit lastPit = this.getAllPits().get(lastDroppedPosition);
 
-        if (lastPit instanceof SmallPit
-                && gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide)) {
+
+        if (lastPitIsMovingPlayersSmallPit(gameBoardFeatures, movingPlayerSide, lastPit)) {
             if (lastPit.getCurrentStoneCount() == 1) {
                 captureOpponentPitAndDropStonesToOwnBigPit(gameBoardFeatures, movingPlayerSide, lastPit);
 
             } else {
                 this.switchPlayerTurn(movingPlayerId);
             }
-        } else if (lastPit instanceof SmallPit
-                && !gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide)) {
+        } else if (lastPitIsOpponentPlayersSmallPit(gameBoardFeatures, movingPlayerSide, lastPit)) {
             this.switchPlayerTurn(movingPlayerId);
         }
 
         return this;
 
 
+    }
+
+    private boolean lastPitIsMovingPlayersSmallPit(final GameBoardFeatures gameBoardFeatures, final PlayerSide movingPlayerSide, final Pit lastPit) {
+        return lastPit instanceof SmallPit
+                && gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide);
+    }
+
+    private boolean lastPitIsOpponentPlayersSmallPit(final GameBoardFeatures gameBoardFeatures, final PlayerSide movingPlayerSide, final Pit lastPit) {
+        return lastPit instanceof SmallPit
+                && !gameBoardFeatures.pitPositionBelongsToPlayingSide(lastPit.getPitPosition(), movingPlayerSide);
     }
 
     private void captureOpponentPitAndDropStonesToOwnBigPit(GameBoardFeatures gameBoardFeatures, PlayerSide movingPlayerSide, Pit lastPit) {

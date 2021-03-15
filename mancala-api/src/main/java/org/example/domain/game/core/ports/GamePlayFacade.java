@@ -11,15 +11,10 @@ import org.example.domain.game.core.model.exceptions.GameIllegalMoveException;
 import org.example.domain.game.core.model.exceptions.GameNotFoundException;
 import org.example.domain.game.core.model.output.ActiveGameStateResponse;
 import org.example.domain.game.core.model.output.GameStateResponse;
-import org.example.domain.game.core.model.output.PlayerScore;
 import org.example.domain.game.core.ports.incoming.GamePlay;
 import org.example.domain.game.core.ports.outgoing.GamePlayDatabase;
 import org.example.domain.player.core.model.exceptions.PlayerNotFoundException;
 import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Slf4j
@@ -59,9 +54,9 @@ public class GamePlayFacade implements GamePlay {
         gameState
                 .isGameActive(() -> new GameIllegalMoveException("Game is not active"))
                 .isPlayerMoveAllowed(sowCommand.getMovingPlayerId(),
-                () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())))
+                        () -> new GameIllegalMoveException(String.format("Player %s move not allowed", sowCommand.getMovingPlayerId())))
                 .isPickPositionValid(sowCommand.getPickPosition(), sowCommand.getMovingPlayerId(),
-                () -> new GameIllegalMoveException(String.format("Player cannot pick from this position %s", sowCommand.getPickPosition())));
+                        () -> new GameIllegalMoveException(String.format("Player cannot pick from this position %s", sowCommand.getPickPosition())));
 
         final GameState newGameState = gameState.sow(sowCommand.getMovingPlayerId(), sowCommand.getPickPosition(), gameBoardFeatures);
 
