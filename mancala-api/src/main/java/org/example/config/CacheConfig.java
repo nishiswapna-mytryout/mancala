@@ -21,9 +21,8 @@ public class CacheConfig {
 
     @Bean
     public RedisCacheManager cacheManager(final RedisConnectionFactory connectionFactory) {
-        RedisCacheManager rcm = RedisCacheManager.builder(connectionFactory)
+        return RedisCacheManager.builder(connectionFactory)
                 .transactionAware()
                 .build();
-        return rcm;
     }
 }
