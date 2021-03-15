@@ -1,6 +1,6 @@
 package org.example.domain.game.application;
 
-import org.assertj.core.util.Arrays;
+import org.example.domain.game.core.model.GameState;
 import org.example.domain.game.core.model.Pit;
 import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
@@ -21,9 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -42,21 +42,19 @@ public class GameControllerTest extends ControllerTest {
     @Test
     public void givenTwoValidPlayersGameInitializes() throws Exception {
 
-//        List<Pit> pitlist = new ArrayList<>();
-//
-//        when(gamePlay.initialize(any(NewGameCommand.class)))
-//                .thenReturn(new ActiveGameStateResponse("SomeGameId",pitlist,"SomePlayerId","SomeOppId"));
-//
-//        this.mockMvc.perform(post("/game")
-//                .content(asJsonString(new NewGameCommand("playerIdA","playerIdB")))
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().is2xxSuccessful())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.gameId").value("SomeGameId"))
-//                .andExpect(jsonPath("$.playerIdTurn").value("SomePlayerId"))
-//                .andExpect(jsonPath("$.playerIdOpponent").value("SomeOppId"))
-//                .andReturn();
+
+        when(gamePlay.initialize(any(NewGameCommand.class)))
+                .thenReturn(ActiveGameStateResponse.from(GameState.initialize("SomePlayerId", "SomeOppId", 6)));
+
+        this.mockMvc.perform(post("/game")
+                .content(asJsonString(new NewGameCommand("playerIdA", "playerIdB")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.playerIdTurn").value("SomePlayerId"))
+                .andExpect(jsonPath("$.playerIdOpponent").value("SomeOppId"))
+                .andReturn();
     }
 
     @Test
@@ -65,7 +63,7 @@ public class GameControllerTest extends ControllerTest {
                 .thenThrow(new IllegalArgumentException("Invalid player"));
 
         this.mockMvc.perform(post("/game")
-                .content(asJsonString(new NewGameCommand("playerIdA","playerIdB")))
+                .content(asJsonString(new NewGameCommand("playerIdA", "playerIdB")))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError())
@@ -76,13 +74,13 @@ public class GameControllerTest extends ControllerTest {
     }
 
     @Test
-    public void givenTwoValidPlayersGameInitializationError() throws Exception{
+    public void givenTwoValidPlayersGameInitializationError() throws Exception {
 
         when(gamePlay.initialize(any(NewGameCommand.class)))
                 .thenReturn(null);
 
         this.mockMvc.perform(post("/game")
-                .content(asJsonString(new NewGameCommand("playerIdA","playerIdB")))
+                .content(asJsonString(new NewGameCommand("playerIdA", "playerIdB")))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
@@ -91,33 +89,21 @@ public class GameControllerTest extends ControllerTest {
     }
 
     @Test
-    public void givenValidgameIdandsowRequestGameSowSuccess() throws Exception{
+    public void givenValidgameIdandsowRequestGameSowSuccess() throws Exception {
 
-//        List<Pit> pitlist = new ArrayList<Pit>();
-//        when(gamePlay.sow(any(SowCommand.class)))
-//                .thenReturn(new ActiveGameStateResponse("SomeGameId",pitlist,"SomePlayerId","SomeOppId"));
-//
-//        this.mockMvc.perform(post("/game/{id}")
-//                .content(asJsonString(new SowCommand("someGameId","somePickPosition","somePlayerId")))
-//                .contentType(MediaType.APPLICATION_JSON)
-//                .accept(MediaType.APPLICATION_JSON))
-//                .andExpect(status().is2xxSuccessful())
-//                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.gameId").value("SomeGameId"))
-//                .andExpect(jsonPath("$.pickPosition").value("somePickPosition"))
-//                .andExpect(jsonPath("$.movingPlayerId").value("somePlayerId"))
-//                .andReturn();
-    }
+        List<Pit> pitlist = new ArrayList<Pit>();
+        when(gamePlay.sow(any(SowCommand.class)))
+                .thenReturn(ActiveGameStateResponse.from(GameState.initialize("SomePlayerId", "SomeOppId", 6)));
 
-    @Test
-    public void givenInvalidgameIdandsowRequestGameSowError() throws Exception{
-
-    }
-
-    @Test
-    public void givenValidgameIdandsowRequestNoGameSowResponse() throws Exception{
-
+        this.mockMvc.perform(patch("/game/{id}","Some")
+                .content(asJsonString(new SowCommand("someGameId", "somePickPosition", "somePlayerId")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.playerIdTurn").value("SomePlayerId"))
+                .andReturn();
     }
 
 
-    }
+}
