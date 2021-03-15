@@ -140,7 +140,6 @@ function sow() {
 	var pit_location = event.target.id.substring(5);
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
-		alert(this.readyState);
 		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_active_game_response(this.responseText, false);
 		}else if (this.readyState === XMLHttpRequest.DONE && this.status === 400) {
@@ -165,12 +164,9 @@ function sow() {
 
 function status_check() {
 	var xhttp = new XMLHttpRequest();
-	alert('status'+this.readyState);
 	xhttp.onreadystatechange = function () {
 		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_game_status_response(this.responseText);
-		}else if (this.readyState === XMLHttpRequest.DONE && this.status === 400) {
-			document.getElementById("player_turn").innerHTML = "Player " + token_player_mapping[player_turn] + " move not allowed";
 		}
 		else {
 			document.getElementById("player_turn").innerHTML = "status api error";

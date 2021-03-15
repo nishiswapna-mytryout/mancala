@@ -13,11 +13,11 @@ p.box {
 }
 
 p.player_one {
-  background-color:rgb(255, 222, 222);
+  background-color:rgb(255, 229, 204);
 }
 
 p.player_two {
-  background-color:rgb(222, 222, 255);
+  background-color:rgb(204, 255, 255);
 }
 
 p.player_turn {
