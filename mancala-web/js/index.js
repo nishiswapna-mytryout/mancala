@@ -8,7 +8,7 @@ var base_url = "http://localhost:8099/mancala/";
 var player_url = "player"
 var start_url = "game";
 var sow_url = "game/";
-var status = "game/status/";
+var status = "/status";
 
 var pit_number_mapping = JSON.parse('{"B1": "00", "B2": "01", "B3": "02", "B4": "03", "B5": "04", "B6": "05", "BL": "06", "A1": "07", "A2": "08", "A3": "09", "A4": "10", "A5": "11", "A6": "12", "AL": "13"}');
 var number_pit_mapping = JSON.parse('{"00": "B1", "01": "B2", "02": "B3", "03": "B4", "04": "B5", "05": "B6", "06": "BL", "07": "A1", "08": "A2", "09": "A3", "10": "A4", "11": "A5", "12": "A6", "13": "AL"}');
@@ -32,7 +32,7 @@ function start_game() {
 function create_player(player_first_name, player_last_name) {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
-		if (this.readyState === XMLHttpRequest.DONE && this.status == 201) {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 201) {
 			token_player_mapping[JSON.parse(this.responseText).playerId]=player_first_name;
 		} else {
 			document.getElementById("player_turn").innerHTML = "unable to create player";
@@ -53,7 +53,7 @@ function create_player(player_first_name, player_last_name) {
 function call_start_api(player_id_1, player_id_2) {
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
-		if (this.readyState === XMLHttpRequest.DONE && this.status == 200) {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_active_game_response(this.responseText, true);
 			register_event_handler_on_cell();
 			active = true;
@@ -78,7 +78,7 @@ function process_active_game_response(response, render) {
 	json = JSON.parse(response);
 	gameid = json.gameId;
 	player_turn = json.playerIdTurn;
-	if (render == true) {
+	if (render === true) {
 		render_board(json.pitState);
 	}
 }
@@ -87,7 +87,7 @@ function process_game_status_response(response) {
 	console.log(response);
 	json = JSON.parse(response);
 	render_board(json.pitState);
-	if (json.hasGameEnded == true) {
+	if (json.hasGameEnded === true) {
 		var playerScores = json.playerScores;
 		var player_1_score = playerScores[0];
 		var msg = "" + token_player_mapping[playerScores[0].playerId] + ": " + playerScores[0].bigPitStoneCount + "---" + token_player_mapping[playerScores[1].playerId] + ": " + playerScores[1].bigPitStoneCount;
@@ -140,9 +140,13 @@ function sow() {
 	var pit_location = event.target.id.substring(5);
 	var xhttp = new XMLHttpRequest();
 	xhttp.onreadystatechange = function () {
+		alert(this.readyState);
 		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_active_game_response(this.responseText, false);
-		} else {
+		}else if (this.readyState === XMLHttpRequest.DONE && this.status === 400) {
+			document.getElementById("player_turn").innerHTML = "Player " + token_player_mapping[player_turn] + " move not allowed";
+		}
+		else {
 			document.getElementById("player_turn").innerHTML = "sow api error";
 		}
 	};
@@ -161,14 +165,18 @@ function sow() {
 
 function status_check() {
 	var xhttp = new XMLHttpRequest();
+	alert('status'+this.readyState);
 	xhttp.onreadystatechange = function () {
-		if (this.readyState == 4 && this.status == 200) {
+		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_game_status_response(this.responseText);
-		} else {
+		}else if (this.readyState === XMLHttpRequest.DONE && this.status === 400) {
+			document.getElementById("player_turn").innerHTML = "Player " + token_player_mapping[player_turn] + " move not allowed";
+		}
+		else {
 			document.getElementById("player_turn").innerHTML = "status api error";
 		}
 	}
-	var url = base_url + status + gameid;
+	var url = base_url +sow_url+ gameid + status;
 	console.log(url);
 	xhttp.open("GET", url, true);
 	xhttp.send();
