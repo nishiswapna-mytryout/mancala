@@ -1,9 +1,10 @@
-package org.example.domain.player.application;
+package org.example.domain.test.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.example.domain.game.infrastructure.GamePlayRepository;
 import org.example.domain.player.infrastructure.PlayerRepository;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
 
 public class ControllerTest {
 

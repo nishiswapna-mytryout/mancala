@@ -7,7 +7,9 @@ import org.example.domain.player.core.model.exceptions.PlayerNotFoundException;
 import org.example.domain.player.core.model.output.PlayerIdentifier;
 import org.example.domain.player.core.model.output.PlayerResponse;
 import org.example.domain.player.core.ports.outgoing.PlayerDatabase;
+import org.example.domain.test.support.UnitTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -20,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-
+@Category(UnitTest.class)
 @RunWith(MockitoJUnitRunner.class)
 public class PlayerFacadeTest {
 

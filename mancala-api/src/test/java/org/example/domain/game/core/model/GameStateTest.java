@@ -2,11 +2,14 @@ package org.example.domain.game.core.model;
 
 import org.example.domain.GameBoardFeatures;
 import org.example.domain.game.core.model.exceptions.GameIllegalMoveException;
+import org.example.domain.test.support.UnitTest;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
 import static org.junit.Assert.*;
 
+@Category(UnitTest.class)
 public class GameStateTest {
 
     private GameState gameState = null;

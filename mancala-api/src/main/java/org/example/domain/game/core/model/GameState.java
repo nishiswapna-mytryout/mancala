@@ -26,15 +26,13 @@ public class GameState implements Serializable {
     @NonNull
     private final List<PlayerState> playerStates;
 
-    @Getter
-    @Setter
+    @Setter(AccessLevel.PRIVATE)
     private boolean isFinished = false;
 
     /**
      * The mapping between pit position and Actual Pits
      **/
     @NonNull
-    @Getter
     private final Map<String, Pit> allPits;
 
     private static GameState gameState;

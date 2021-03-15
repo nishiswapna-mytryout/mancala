@@ -6,7 +6,10 @@ import org.example.domain.player.core.model.output.PlayerIdentifier;
 import org.example.domain.player.core.model.output.PlayerResponse;
 import org.example.domain.player.core.ports.incoming.AddNewPlayer;
 import org.example.domain.player.core.ports.incoming.GetPlayer;
+import org.example.domain.test.support.ControllerTest;
+import org.example.domain.test.support.IntegrationTest;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -24,6 +27,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+@Category(IntegrationTest.class)
 @AutoConfigureMockMvc
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
         , properties = "server.port=0")
