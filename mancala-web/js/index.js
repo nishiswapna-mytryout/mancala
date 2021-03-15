@@ -1,4 +1,4 @@
-pure-u-3-5var gameid = "";
+var gameid = "";
 var player_id_1 = "";
 var player_id_2 = "";
 var player_turn = "";
@@ -105,6 +105,7 @@ function render_board(board_json) {
 		var pit = board_json[i].pitPosition;
 		document.getElementById("cell-" + pit_number_mapping[pit]).innerHTML = board_json[i].currentStoneCount;
 	}
+	alert('render_board');
 	document.getElementById("player_turn").innerHTML = "Player " + token_player_mapping[player_turn] + " turn";
 }
 
@@ -145,7 +146,10 @@ function sow() {
 			process_active_game_response(this.responseText, false);
 		}else if (this.readyState === XMLHttpRequest.DONE && this.status === 400) {
 			document.getElementById("player_turn").innerHTML = "Player " + token_player_mapping[player_turn] + " move not allowed";
+		}else if (this.readyState === XMLHttpRequest.DONE && this.status === 500) {
+			document.getElementById("player_turn").innerHTML = "Player " + token_player_mapping[player_turn] + " move not allowed";
 		} else {
+			alert('sow'+this.readyState+' '+this.status);
 			document.getElementById("player_turn").innerHTML = this.responseText;
 		}
 	};
@@ -168,7 +172,8 @@ function status_check() {
 		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_game_status_response(this.responseText);
 		} else {
-			document.getElementById("player_turn").innerHTML = "status api error";
+			alert('status_check'+this.readyState+' '+this.status);
+			document.getElementById("player_turn").innerHTML = this.responseText;
 		}
 	}
 	var url = base_url + game_url + "/" + gameid + "/status";
