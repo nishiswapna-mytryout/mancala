@@ -6,15 +6,19 @@ import org.example.domain.game.core.model.command.NewGameCommand;
 import org.example.domain.game.core.model.command.SowCommand;
 import org.example.domain.game.core.model.output.ActiveGameStateResponse;
 import org.example.domain.game.core.ports.incoming.GamePlay;
+import org.example.domain.game.infrastructure.GamePlayRepository;
 import org.example.domain.player.application.ControllerTest;
+import org.example.domain.player.infrastructure.PlayerRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -31,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, properties = "server.port=0")
 @DirtiesContext
 @RunWith(SpringRunner.class)
+@TestPropertySource(locations = "classpath:test.properties")
 public class GameControllerTest extends ControllerTest {
 
     @MockBean
@@ -91,7 +96,6 @@ public class GameControllerTest extends ControllerTest {
     @Test
     public void givenValidgameIdandsowRequestGameSowSuccess() throws Exception {
 
-        List<Pit> pitlist = new ArrayList<Pit>();
         when(gamePlay.sow(any(SowCommand.class)))
                 .thenReturn(ActiveGameStateResponse.from(GameState.initialize("SomePlayerId", "SomeOppId", 6)));
 
