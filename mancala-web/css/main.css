@@ -34,3 +34,10 @@ p.hide {
 .center {
   text-align: center;
 }
+
+p.player_position {
+  outline: none;
+  height: 6vh;
+  font-size: 120%;
+  font-weight: bold;
+}

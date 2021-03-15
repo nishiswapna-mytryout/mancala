@@ -1,4 +1,4 @@
-var gameid = "";
+pure-u-3-5var gameid = "";
 var player_id_1 = "";
 var player_id_2 = "";
 var player_turn = "";
@@ -6,9 +6,7 @@ var active = false;
 
 var base_url = "http://localhost:8099/mancala/";
 var player_url = "player"
-var start_url = "game";
-var sow_url = "game/";
-var status = "/status";
+var game_url = "game";
 
 var pit_number_mapping = JSON.parse('{"B1": "00", "B2": "01", "B3": "02", "B4": "03", "B5": "04", "B6": "05", "BL": "06", "A1": "07", "A2": "08", "A3": "09", "A4": "10", "A5": "11", "A6": "12", "AL": "13"}');
 var number_pit_mapping = JSON.parse('{"00": "B1", "01": "B2", "02": "B3", "03": "B4", "04": "B5", "05": "B6", "06": "BL", "07": "A1", "08": "A2", "09": "A3", "10": "A4", "11": "A5", "12": "A6", "13": "AL"}');
@@ -27,6 +25,9 @@ function start_game() {
 	create_player(player_id_2_first,player_id_2_last);
 
 	call_start_api(player_id_1, player_id_2);
+
+	document.getElementById("player_position_1").innerHTML = "Player "+player_id_1_first;
+	document.getElementById("player_position_2").innerHTML = "Player "+player_id_2_first;
 }
 
 function create_player(player_first_name, player_last_name) {
@@ -61,7 +62,7 @@ function call_start_api(player_id_1, player_id_2) {
 			document.getElementById("player_turn").innerHTML = "unable to start the game";
 		}
 	};
-	var url = base_url + start_url;
+	var url = base_url + game_url;
 	console.log(url);
 	var data = {};
 	var tokens = Object.keys(token_player_mapping);
@@ -144,19 +145,18 @@ function sow() {
 			process_active_game_response(this.responseText, false);
 		}else if (this.readyState === XMLHttpRequest.DONE && this.status === 400) {
 			document.getElementById("player_turn").innerHTML = "Player " + token_player_mapping[player_turn] + " move not allowed";
-		}
-		else {
-			document.getElementById("player_turn").innerHTML = "sow api error";
+		} else {
+			document.getElementById("player_turn").innerHTML = this.responseText;
 		}
 	};
-	var url = base_url + sow_url + gameid;
+	var url = base_url + game_url + "/" + gameid;
 
 	var data = {};
 	data.pickPosition=number_pit_mapping[pit_location];
 	data.movingPlayerId=player_turn
 	var json = JSON.stringify(data);
 	console.log(url);
-	xhttp.open("PATCH", url, true);
+	xhttp.open("PATCH", url, false);
 	xhttp.setRequestHeader("Content-Type", "application/json");
 	xhttp.send(json);
 }
@@ -167,14 +167,13 @@ function status_check() {
 	xhttp.onreadystatechange = function () {
 		if (this.readyState === XMLHttpRequest.DONE && this.status === 200) {
 			process_game_status_response(this.responseText);
-		}
-		else {
+		} else {
 			document.getElementById("player_turn").innerHTML = "status api error";
 		}
 	}
-	var url = base_url +sow_url+ gameid + status;
+	var url = base_url + game_url + "/" + gameid + "/status";
 	console.log(url);
-	xhttp.open("GET", url, true);
+	xhttp.open("GET", url, false);
 	xhttp.send();
 }
 
