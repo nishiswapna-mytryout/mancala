@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <title>Mancala</title>
-    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="css/main.css" />
     <link rel="stylesheet" href="https://unpkg.com/purecss@0.6.2/build/pure-min.css" integrity="sha384-UQiGfs9ICog+LwheBSRCt1o5cbyKIHbwjWscjemyBMT9YCUMZffs6UqUTd0hObXD" crossorigin="anonymous" />
 </head>
 <body>
@@ -87,15 +87,17 @@
             <p id="server-message"></p>
             <form class="pure-form center">
                 <label for="player_id_1_first">Player 1</label><br />
-                <input type="text" id="player_id_1_first" name="player_id_1_first" /><input type="text" id="player_id_1_last" name="player_id_1_last" /><br />
-                <label for="player_id_2_first">Player 2</label><br />
-                <input type="text" id="player_id_2_first" name="player_id_2_first"/><input type="text" id="player_id_2_last" name="player_id_2_last"/><br />
+                <label for="player_id_1_first">First name</label><input type="text" id="player_id_1_first" name="player_id_1_first" /><br />
+                <label for="player_id_1_last">Last name</label><input type="text" id="player_id_1_last" name="player_id_1_last" /><br />
+                <br /><label for="player_id_2_first">Player 2</label><br />
+                <label for="player_id_2_first">First name</label><input type="text" id="player_id_2_first" name="player_id_2_first"/><br />
+                <label for="player_id_2_last">Last name</label><input type="text" id="player_id_2_last" name="player_id_2_last"/><br />
                 <br />
                 <input type="button" id="start_button" value="Start" />
             </form>
         </div>
     </div>
 </div>
-<script src="index.js"></script>
+<script src="js/index.js"></script>
 </body>
 </html>
